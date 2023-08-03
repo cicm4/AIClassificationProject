@@ -1,0 +1,2298 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[    126034,       2288]
+NotebookOptionsPosition[    124937,       2263]
+NotebookOutlinePosition[    125338,       2279]
+CellTagsIndexPosition[    125295,       2276]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"extractData", "[", "dir_", "]"}], ":=", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"fileNames", ",", "allData"}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"fileNames", "=", 
+       RowBox[{"FileNames", "[", 
+        RowBox[{"\"\<*.txt\>\"", ",", "dir"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"allData", "=", 
+       RowBox[{"Table", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"data", "=", 
+           RowBox[{"Import", "[", "file", "]"}]}], ";", "data"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"file", ",", "fileNames"}], "}"}]}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"allData", "=", 
+       RowBox[{"Flatten", "[", "allData", "]"}]}], ";", "\[IndentingNewLine]",
+       "allData"}]}], "\[IndentingNewLine]", "]"}]}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"gloveResource", "=", 
+   RowBox[{
+   "NetModel", "[", 
+    "\"\<GloVe 300-Dimensional Word Vectors Trained on Common Crawl 42B\>\"", 
+    "]"}]}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"spamData", "=", 
+   RowBox[{
+   "extractData", "[", 
+    "\"\<C:\\\\Users\\\\camil\\\\OneDrive\\\\Documents\\\\Harvard\\\\\
+FinalProject\\\\enron6\\\\spam\>\"", "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"hamData", "=", 
+    RowBox[{
+    "extractData", "[", 
+     "\"\<C:\\\\Users\\\\camil\\\\OneDrive\\\\Documents\\\\Harvard\\\\\
+FinalProject\\\\enron6\\\\ham\>\"", "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"processedSpamData", " ", "=", 
+    RowBox[{"gloveResource", "/@", "spamData"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"processedHamData", " ", "=", " ", 
+    RowBox[{"gloveResource", " ", "/@", " ", "hamData"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"spamData", "=", 
+   RowBox[{"Thread", "[", 
+    RowBox[{"processedSpamData", "->", "\"\<spam\>\""}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"hamData", "=", 
+   RowBox[{"Thread", "[", 
+    RowBox[{"processedHamData", "->", "\"\<ham\>\""}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"combinedData", "=", 
+    RowBox[{"RandomSample", "[", 
+     RowBox[{"Join", "[", 
+      RowBox[{"spamData", ",", "hamData"}], "]"}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"train", "=", 
+   RowBox[{"RandomSample", "[", 
+    RowBox[{"combinedData", ",", "4800"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"test", "=", 
+    RowBox[{"Complement", "[", 
+     RowBox[{"combinedData", ",", "train"}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.9000786187599263`*^9, 3.900078641547231*^9}, {
+  3.9000797534585333`*^9, 3.9000797574898767`*^9}, {3.9000799944439955`*^9, 
+  3.900080077105981*^9}},ExpressionUUID->"1bb2796d-19f7-43b2-ac04-\
+ac80ca1d7e9f"],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{
+  3.9000799931236563`*^9},ExpressionUUID->"ecd7db6c-e6d5-4949-b5f3-\
+0a1c98514a2b"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"mnistEncoder", "=", 
+   RowBox[{"NetEncoder", "[", 
+    RowBox[{"{", 
+     RowBox[{"\"\<Image\>\"", ",", 
+      RowBox[{"{", 
+       RowBox[{"28", ",", "28"}], "}"}], ",", 
+      RowBox[{"\"\<ColorSpace\>\"", "->", "\"\<Grayscale\>\""}]}], "}"}], 
+    "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"mnistDecoder", "=", 
+   RowBox[{"NetDecoder", "[", 
+    RowBox[{"{", 
+     RowBox[{"\"\<Class\>\"", ",", 
+      RowBox[{"Range", "[", 
+       RowBox[{"0", ",", "9"}], "]"}]}], "}"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{
+  3.9000800889931912`*^9},ExpressionUUID->"10c131b1-3d92-40e4-9199-\
+78b713e3bf5e"],
+
+Cell[BoxData[
+ TagBox[
+  TemplateBox[{
+    RowBox[{
+      StyleBox[
+       TagBox["EmbeddingLayer", "SummaryHead"], "NonInterpretableSummary"], 
+      StyleBox["[", "NonInterpretableSummary"], 
+      DynamicModuleBox[{
+       Typeset`open$$ = False, Typeset`embedState$$ = "Ready"}, 
+       TemplateBox[{
+         TemplateBox[{
+           PaneSelectorBox[{False -> GridBox[{{
+                 PaneBox[
+                  ButtonBox[
+                   DynamicBox[
+                    FEPrivate`FrontEndResource[
+                    "FEBitmaps", "SummaryBoxOpener"]], 
+                   ButtonFunction :> (Typeset`open$$ = True), Appearance -> 
+                   None, BaseStyle -> {}, Evaluator -> Automatic, Method -> 
+                   "Preemptive"], Alignment -> {Center, Center}, ImageSize -> 
+                  Dynamic[{
+                    Automatic, 
+                    3.5 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
+                 GraphicsBox[
+                  
+                  GraphicsComplexBox[{{0, 0}, {-0.5, 1}, {0.5, 1}, {1.5, 1}, {
+                    1, 0}}, {{
+                    Opacity[0.3], 
+                    
+                    LineBox[{{1, 2}, {1, 3}, {1, 4}, {5, 2}, {5, 3}, {5, 
+                    4}}]}, {
+                    AbsolutePointSize[5], 
+                    RGBColor[0.33, 0.33, 0.33], 
+                    PointBox[{1, 5, 2, 3, 4}]}}], ImageSize -> 37], 
+                 GridBox[{{
+                    TagBox[
+                    StyleBox[
+                    TemplateBox[{
+                    TagBox[
+                    TooltipBox[
+                    TagBox[
+                    
+                    PaneSelectorBox[{
+                    False -> FrameBox[
+                    "\"Input\"", FrameStyle -> GrayLevel[0, 0], FrameMargins -> 
+                    0, ContentPadding -> False, BaselinePosition -> 0, 
+                    StripOnInput -> False], True -> 
+                    FrameBox["\"Input\"", Background -> 
+                    RGBColor[0.9098039215686274, 0.9529411764705882, 1.], 
+                    FrameStyle -> 
+                    RGBColor[0.9098039215686274, 0.9529411764705882, 1.], 
+                    RoundingRadius -> 3, FrameMargins -> 0, ContentPadding -> 
+                    False, BaselinePosition -> 0, StripOnInput -> False]}, 
+                    Dynamic[
+                    CurrentValue["MouseOver"]], FrameMargins -> 0, 
+                    ContentPadding -> False, BaselinePosition -> 0, ImageSize -> 
+                    Automatic, FrameMargins -> 0], 
+                    EventHandlerTag[{"MouseClicked" :> CopyToClipboard[
+                    ToString[{"Input"}, InputForm]], Method -> "Preemptive", 
+                    PassEventsDown -> Automatic, PassEventsUp -> True}]], 
+                    TagBox[
+                    GridBox[{{
+                    GraphicsBox[{
+                    FaceForm[
+                    RGBColor[
+                    0.9607843137254902, 0.9607843137254902, 
+                    0.9607843137254902]], 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], 
+                    Thickness[
+                    NCache[
+                    Rational[2, 45], 0.044444444444444446`]], 
+                    
+                    FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}}, {{{10.5, 18.75}, {10.5, 
+                    18.}, {9., 18.}, {9., 15.75}, {13.5, 15.75}, {13.5, 
+                    18.}, {12., 18.}, {12., 18.75}}, {{6., 18.}, {6., 4.5}, {
+                    16.5, 4.5}, {16.5, 18.}, {14.25, 18.}, {14.25, 17.25}, {
+                    15.75, 17.25}, {15.75, 5.25}, {6.75, 5.25}, {6.75, 
+                    17.25}, {8.25, 17.25}, {8.25, 18.}}, {{9.75, 17.25}, {
+                    12.75, 17.25}, {12.75, 16.5}, {9.75, 16.5}}}], 
+                    
+                    FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2,
+                     0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                    0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}}, {{{8.25, 
+                    14.25}, {14.25, 14.25}, {14.25, 13.5}, {8.25, 13.5}}, {{
+                    8.25, 12.}, {14.25, 12.}, {14.25, 11.25}, {8.25, 
+                    11.25}}, {{8.25, 9.75}, {14.25, 9.75}, {14.25, 9.}, {8.25,
+                     9.}}, {{8.25, 7.5}, {14.25, 7.5}, {14.25, 6.75}, {8.25, 
+                    6.75}}}]}, ImageSize -> 11], 
+                    StyleBox["\"path: \"", 
+                    RGBColor[0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], StripOnInput -> False], 
+                    RowBox[{"{", "\"Input\"", "}"}]}}, 
+                    GridBoxAlignment -> {
+                    "Columns" -> {{Left}}, "Rows" -> {{Center}}}, AutoDelete -> 
+                    False, GridBoxItemSize -> {
+                    "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+                    GridBoxSpacings -> {
+                    "Columns" -> {{0.2}}, "Rows" -> {{Automatic}}}], "Grid"], 
+                    TooltipStyle -> {
+                    Background -> 
+                    RGBColor[0.9098039215686274, 0.9529411764705882, 1.]}], 
+                    Annotation[#, 
+                    Grid[{{
+                    Graphics[{
+                    FaceForm[
+                    RGBColor[
+                    0.9607843137254902, 0.9607843137254902, 
+                    0.9607843137254902]], 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], 
+                    Thickness[
+                    Rational[2, 45]], 
+                    
+                    FilledCurve[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}}, {{{10.5, 18.75}, {10.5, 
+                    18.}, {9., 18.}, {9., 15.75}, {13.5, 15.75}, {13.5, 
+                    18.}, {12., 18.}, {12., 18.75}}, {{6., 18.}, {6., 4.5}, {
+                    16.5, 4.5}, {16.5, 18.}, {14.25, 18.}, {14.25, 17.25}, {
+                    15.75, 17.25}, {15.75, 5.25}, {6.75, 5.25}, {6.75, 
+                    17.25}, {8.25, 17.25}, {8.25, 18.}}, {{9.75, 17.25}, {
+                    12.75, 17.25}, {12.75, 16.5}, {9.75, 16.5}}}], 
+                    
+                    FilledCurve[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                    0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}}, {{{8.25, 
+                    14.25}, {14.25, 14.25}, {14.25, 13.5}, {8.25, 13.5}}, {{
+                    8.25, 12.}, {14.25, 12.}, {14.25, 11.25}, {8.25, 
+                    11.25}}, {{8.25, 9.75}, {14.25, 9.75}, {14.25, 9.}, {8.25,
+                     9.}}, {{8.25, 7.5}, {14.25, 7.5}, {14.25, 6.75}, {8.25, 
+                    6.75}}}]}, ImageSize -> 11], 
+                    Style["path: ", 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843]], {"Input"}}}, 
+                    Alignment -> {Left, Center}, 
+                    Spacings -> {0.2, Automatic}], "Tooltip"]& ], "\":\""}, 
+                    "RowDefault"], "SummaryItemAnnotation"], "SummaryItem"], 
+                    TagBox[
+                    StyleBox["\"string\"", "SummaryItem"], "SummaryItem"]}, {
+                    TagBox[
+                    StyleBox[
+                    TemplateBox[{
+                    TagBox[
+                    TooltipBox[
+                    TagBox[
+                    
+                    PaneSelectorBox[{
+                    False -> FrameBox[
+                    "\"Output\"", FrameStyle -> GrayLevel[0, 0], FrameMargins -> 
+                    0, ContentPadding -> False, BaselinePosition -> 0, 
+                    StripOnInput -> False], True -> 
+                    FrameBox["\"Output\"", Background -> 
+                    RGBColor[0.9098039215686274, 0.9529411764705882, 1.], 
+                    FrameStyle -> 
+                    RGBColor[0.9098039215686274, 0.9529411764705882, 1.], 
+                    RoundingRadius -> 3, FrameMargins -> 0, ContentPadding -> 
+                    False, BaselinePosition -> 0, StripOnInput -> False]}, 
+                    Dynamic[
+                    CurrentValue["MouseOver"]], FrameMargins -> 0, 
+                    ContentPadding -> False, BaselinePosition -> 0, ImageSize -> 
+                    Automatic, FrameMargins -> 0], 
+                    EventHandlerTag[{"MouseClicked" :> CopyToClipboard[
+                    ToString[{"Output"}, InputForm]], Method -> "Preemptive", 
+                    PassEventsDown -> Automatic, PassEventsUp -> True}]], 
+                    TagBox[
+                    GridBox[{{
+                    GraphicsBox[{
+                    FaceForm[
+                    RGBColor[
+                    0.9607843137254902, 0.9607843137254902, 
+                    0.9607843137254902]], 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], 
+                    Thickness[
+                    NCache[
+                    Rational[2, 45], 0.044444444444444446`]], 
+                    
+                    FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}}, {{{10.5, 18.75}, {10.5, 
+                    18.}, {9., 18.}, {9., 15.75}, {13.5, 15.75}, {13.5, 
+                    18.}, {12., 18.}, {12., 18.75}}, {{6., 18.}, {6., 4.5}, {
+                    16.5, 4.5}, {16.5, 18.}, {14.25, 18.}, {14.25, 17.25}, {
+                    15.75, 17.25}, {15.75, 5.25}, {6.75, 5.25}, {6.75, 
+                    17.25}, {8.25, 17.25}, {8.25, 18.}}, {{9.75, 17.25}, {
+                    12.75, 17.25}, {12.75, 16.5}, {9.75, 16.5}}}], 
+                    
+                    FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2,
+                     0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                    0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}}, {{{8.25, 
+                    14.25}, {14.25, 14.25}, {14.25, 13.5}, {8.25, 13.5}}, {{
+                    8.25, 12.}, {14.25, 12.}, {14.25, 11.25}, {8.25, 
+                    11.25}}, {{8.25, 9.75}, {14.25, 9.75}, {14.25, 9.}, {8.25,
+                     9.}}, {{8.25, 7.5}, {14.25, 7.5}, {14.25, 6.75}, {8.25, 
+                    6.75}}}]}, ImageSize -> 11], 
+                    StyleBox["\"path: \"", 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], StripOnInput -> False], 
+                    RowBox[{"{", "\"Output\"", "}"}]}}, 
+                    GridBoxAlignment -> {
+                    "Columns" -> {{Left}}, "Rows" -> {{Center}}}, AutoDelete -> 
+                    False, GridBoxItemSize -> {
+                    "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+                    GridBoxSpacings -> {
+                    "Columns" -> {{0.2}}, "Rows" -> {{Automatic}}}], "Grid"], 
+                    TooltipStyle -> {
+                    Background -> 
+                    RGBColor[0.9098039215686274, 0.9529411764705882, 1.]}], 
+                    Annotation[#, 
+                    Grid[{{
+                    Graphics[{
+                    FaceForm[
+                    RGBColor[
+                    0.9607843137254902, 0.9607843137254902, 
+                    0.9607843137254902]], 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], 
+                    Thickness[
+                    Rational[2, 45]], 
+                    
+                    FilledCurve[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}}, {{{10.5, 18.75}, {10.5, 
+                    18.}, {9., 18.}, {9., 15.75}, {13.5, 15.75}, {13.5, 
+                    18.}, {12., 18.}, {12., 18.75}}, {{6., 18.}, {6., 4.5}, {
+                    16.5, 4.5}, {16.5, 18.}, {14.25, 18.}, {14.25, 17.25}, {
+                    15.75, 17.25}, {15.75, 5.25}, {6.75, 5.25}, {6.75, 
+                    17.25}, {8.25, 17.25}, {8.25, 18.}}, {{9.75, 17.25}, {
+                    12.75, 17.25}, {12.75, 16.5}, {9.75, 16.5}}}], 
+                    
+                    FilledCurve[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                    0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}}, {{{8.25, 
+                    14.25}, {14.25, 14.25}, {14.25, 13.5}, {8.25, 13.5}}, {{
+                    8.25, 12.}, {14.25, 12.}, {14.25, 11.25}, {8.25, 
+                    11.25}}, {{8.25, 9.75}, {14.25, 9.75}, {14.25, 9.}, {8.25,
+                     9.}}, {{8.25, 7.5}, {14.25, 7.5}, {14.25, 6.75}, {8.25, 
+                    6.75}}}]}, ImageSize -> 11], 
+                    Style["path: ", 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843]], {"Output"}}}, 
+                    Alignment -> {Left, Center}, 
+                    Spacings -> {0.2, Automatic}], "Tooltip"]& ], "\":\""}, 
+                    "RowDefault"], "SummaryItemAnnotation"], "SummaryItem"], 
+                    TagBox[
+                    StyleBox[
+                    TagBox[
+                    TemplateBox[{"\[ThinSpace]", "\" \"", "\"matrix\"", 
+                    StyleBox[
+                    TemplateBox[{"\"(\[VeryThinSpace]size: \"", 
+                    StyleBox["\"n\"", Italic, StripOnInput -> False], 
+                    "\"\[Times]300\[VeryThinSpace])\""}, "RowDefault"], 
+                    GrayLevel[0.5], StripOnInput -> False]}, 
+                    "RowWithSeparators"], Short], "SummaryItem"], 
+                    "SummaryItem"]}}, 
+                  GridBoxAlignment -> {
+                   "Columns" -> {{Left}}, "Rows" -> {{Automatic}}}, 
+                  AutoDelete -> False, 
+                  GridBoxItemSize -> {
+                   "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+                  GridBoxSpacings -> {
+                   "Columns" -> {{2}}, "Rows" -> {{Automatic}}}, 
+                  BaseStyle -> {
+                   ShowStringCharacters -> False, NumberMarks -> False, 
+                    PrintPrecision -> 3, ShowSyntaxStyles -> False}]}}, 
+               GridBoxAlignment -> {"Columns" -> {{Left}}, "Rows" -> {{Top}}},
+                AutoDelete -> False, 
+               GridBoxItemSize -> {
+                "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+               BaselinePosition -> {1, 1}], True -> GridBox[{{
+                 PaneBox[
+                  ButtonBox[
+                   DynamicBox[
+                    FEPrivate`FrontEndResource[
+                    "FEBitmaps", "SummaryBoxCloser"]], 
+                   ButtonFunction :> (Typeset`open$$ = False), Appearance -> 
+                   None, BaseStyle -> {}, Evaluator -> Automatic, Method -> 
+                   "Preemptive"], Alignment -> {Center, Center}, ImageSize -> 
+                  Dynamic[{
+                    Automatic, 
+                    3.5 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
+                 GraphicsBox[
+                  
+                  GraphicsComplexBox[{{0, 0}, {-0.5, 1}, {0.5, 1}, {1.5, 1}, {
+                    1, 0}}, {{
+                    Opacity[0.3], 
+                    
+                    LineBox[{{1, 2}, {1, 3}, {1, 4}, {5, 2}, {5, 3}, {5, 
+                    4}}]}, {
+                    AbsolutePointSize[5], 
+                    RGBColor[0.33, 0.33, 0.33], 
+                    PointBox[{1, 5, 2, 3, 4}]}}], ImageSize -> 37], 
+                 GridBox[{{
+                    TagBox[
+                    
+                    DynamicModuleBox[{
+                    NeuralNetworks`Private`FormattingLayers`opart, 
+                    NeuralNetworks`Private`FormattingLayers`part, 
+                    NeuralNetworks`Private`FormattingLayers`selection = Null}, 
+                    DynamicBox[
+                    GridBox[{{
+                    TagBox[
+                    GridBox[{{
+                    ItemBox[
+                    StyleBox["Parameters", Bold]], 
+                    ItemBox[""]}, {
+                    StyleBox[
+                    TemplateBox[{
+                    TagBox[
+                    TooltipBox[
+                    TagBox[
+                    
+                    PaneSelectorBox[{
+                    False -> FrameBox["\"OutputDimensions\"", FrameStyle -> 
+                    GrayLevel[0, 0], FrameMargins -> 0, ContentPadding -> 
+                    False, BaselinePosition -> 0, StripOnInput -> False], 
+                    True -> FrameBox["\"OutputDimensions\"", Background -> 
+                    RGBColor[0.9098039215686274, 0.9529411764705882, 1.], 
+                    FrameStyle -> RGBColor[
+                    0.9098039215686274, 0.9529411764705882, 1.], 
+                    RoundingRadius -> 3, FrameMargins -> 0, ContentPadding -> 
+                    False, BaselinePosition -> 0, StripOnInput -> False]}, 
+                    Dynamic[
+                    CurrentValue["MouseOver"]], FrameMargins -> 0, 
+                    ContentPadding -> False, BaselinePosition -> 0, ImageSize -> 
+                    Automatic, FrameMargins -> 0], 
+                    EventHandlerTag[{"MouseClicked" :> CopyToClipboard[
+                    ToString[{"OutputDimensions"}, InputForm]], Method -> 
+                    "Preemptive", PassEventsDown -> Automatic, PassEventsUp -> 
+                    True}]], 
+                    TagBox[
+                    GridBox[{{
+                    GraphicsBox[{
+                    FaceForm[
+                    RGBColor[
+                    0.9607843137254902, 0.9607843137254902, 
+                    0.9607843137254902]], 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], 
+                    Thickness[
+                    NCache[
+                    Rational[2, 45], 0.044444444444444446`]], 
+                    
+                    FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}}, {{{10.5, 18.75}, {10.5, 
+                    18.}, {9., 18.}, {9., 15.75}, {13.5, 15.75}, {13.5, 
+                    18.}, {12., 18.}, {12., 18.75}}, {{6., 18.}, {6., 4.5}, {
+                    16.5, 4.5}, {16.5, 18.}, {14.25, 18.}, {14.25, 17.25}, {
+                    15.75, 17.25}, {15.75, 5.25}, {6.75, 5.25}, {6.75, 
+                    17.25}, {8.25, 17.25}, {8.25, 18.}}, {{9.75, 17.25}, {
+                    12.75, 17.25}, {12.75, 16.5}, {9.75, 16.5}}}], 
+                    
+                    FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2,
+                     0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                    0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}}, {{{8.25, 
+                    14.25}, {14.25, 14.25}, {14.25, 13.5}, {8.25, 13.5}}, {{
+                    8.25, 12.}, {14.25, 12.}, {14.25, 11.25}, {8.25, 
+                    11.25}}, {{8.25, 9.75}, {14.25, 9.75}, {14.25, 9.}, {8.25,
+                     9.}}, {{8.25, 7.5}, {14.25, 7.5}, {14.25, 6.75}, {8.25, 
+                    6.75}}}]}, ImageSize -> 11], 
+                    StyleBox["\"path: \"", 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], StripOnInput -> False], 
+                    RowBox[{"{", "\"OutputDimensions\"", "}"}]}}, 
+                    GridBoxAlignment -> {
+                    "Columns" -> {{Left}}, "Rows" -> {{Center}}}, AutoDelete -> 
+                    False, GridBoxItemSize -> {
+                    "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+                    GridBoxSpacings -> {
+                    "Columns" -> {{0.2}}, "Rows" -> {{Automatic}}}], "Grid"], 
+                    TooltipStyle -> {
+                    Background -> RGBColor[
+                    0.9098039215686274, 0.9529411764705882, 1.]}], 
+                    Annotation[#, 
+                    Grid[{{
+                    Graphics[{
+                    FaceForm[
+                    RGBColor[
+                    0.9607843137254902, 0.9607843137254902, 
+                    0.9607843137254902]], 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], 
+                    Thickness[
+                    Rational[2, 45]], 
+                    
+                    FilledCurve[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}}, {{{10.5, 18.75}, {10.5, 
+                    18.}, {9., 18.}, {9., 15.75}, {13.5, 15.75}, {13.5, 
+                    18.}, {12., 18.}, {12., 18.75}}, {{6., 18.}, {6., 4.5}, {
+                    16.5, 4.5}, {16.5, 18.}, {14.25, 18.}, {14.25, 17.25}, {
+                    15.75, 17.25}, {15.75, 5.25}, {6.75, 5.25}, {6.75, 
+                    17.25}, {8.25, 17.25}, {8.25, 18.}}, {{9.75, 17.25}, {
+                    12.75, 17.25}, {12.75, 16.5}, {9.75, 16.5}}}], 
+                    
+                    FilledCurve[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                    0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}}, {{{8.25, 
+                    14.25}, {14.25, 14.25}, {14.25, 13.5}, {8.25, 13.5}}, {{
+                    8.25, 12.}, {14.25, 12.}, {14.25, 11.25}, {8.25, 
+                    11.25}}, {{8.25, 9.75}, {14.25, 9.75}, {14.25, 9.}, {8.25,
+                     9.}}, {{8.25, 7.5}, {14.25, 7.5}, {14.25, 6.75}, {8.25, 
+                    6.75}}}]}, ImageSize -> 11], 
+                    Style["path: ", 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843]], {"OutputDimensions"}}}, 
+                    Alignment -> {Left, Center}, 
+                    Spacings -> {0.2, Automatic}], "Tooltip"]& ], "\":\""}, 
+                    "RowDefault"], "SummaryItemAnnotation"], 
+                    StyleBox["\"300\"", "SummaryItem"]}, {
+                    StyleBox[
+                    TemplateBox[{
+                    TagBox[
+                    TooltipBox[
+                    TagBox[
+                    
+                    PaneSelectorBox[{
+                    False -> FrameBox["\"ClassCount\"", FrameStyle -> 
+                    GrayLevel[0, 0], FrameMargins -> 0, ContentPadding -> 
+                    False, BaselinePosition -> 0, StripOnInput -> False], 
+                    True -> FrameBox["\"ClassCount\"", Background -> 
+                    RGBColor[0.9098039215686274, 0.9529411764705882, 1.], 
+                    FrameStyle -> RGBColor[
+                    0.9098039215686274, 0.9529411764705882, 1.], 
+                    RoundingRadius -> 3, FrameMargins -> 0, ContentPadding -> 
+                    False, BaselinePosition -> 0, StripOnInput -> False]}, 
+                    Dynamic[
+                    CurrentValue["MouseOver"]], FrameMargins -> 0, 
+                    ContentPadding -> False, BaselinePosition -> 0, ImageSize -> 
+                    Automatic, FrameMargins -> 0], 
+                    EventHandlerTag[{"MouseClicked" :> CopyToClipboard[
+                    ToString[{"ClassCount"}, InputForm]], Method -> 
+                    "Preemptive", PassEventsDown -> Automatic, PassEventsUp -> 
+                    True}]], 
+                    TagBox[
+                    GridBox[{{
+                    GraphicsBox[{
+                    FaceForm[
+                    RGBColor[
+                    0.9607843137254902, 0.9607843137254902, 
+                    0.9607843137254902]], 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], 
+                    Thickness[
+                    NCache[
+                    Rational[2, 45], 0.044444444444444446`]], 
+                    
+                    FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}}, {{{10.5, 18.75}, {10.5, 
+                    18.}, {9., 18.}, {9., 15.75}, {13.5, 15.75}, {13.5, 
+                    18.}, {12., 18.}, {12., 18.75}}, {{6., 18.}, {6., 4.5}, {
+                    16.5, 4.5}, {16.5, 18.}, {14.25, 18.}, {14.25, 17.25}, {
+                    15.75, 17.25}, {15.75, 5.25}, {6.75, 5.25}, {6.75, 
+                    17.25}, {8.25, 17.25}, {8.25, 18.}}, {{9.75, 17.25}, {
+                    12.75, 17.25}, {12.75, 16.5}, {9.75, 16.5}}}], 
+                    
+                    FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2,
+                     0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                    0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}}, {{{8.25, 
+                    14.25}, {14.25, 14.25}, {14.25, 13.5}, {8.25, 13.5}}, {{
+                    8.25, 12.}, {14.25, 12.}, {14.25, 11.25}, {8.25, 
+                    11.25}}, {{8.25, 9.75}, {14.25, 9.75}, {14.25, 9.}, {8.25,
+                     9.}}, {{8.25, 7.5}, {14.25, 7.5}, {14.25, 6.75}, {8.25, 
+                    6.75}}}]}, ImageSize -> 11], 
+                    StyleBox["\"path: \"", 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], StripOnInput -> False], 
+                    RowBox[{"{", "\"ClassCount\"", "}"}]}}, 
+                    GridBoxAlignment -> {
+                    "Columns" -> {{Left}}, "Rows" -> {{Center}}}, AutoDelete -> 
+                    False, GridBoxItemSize -> {
+                    "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+                    GridBoxSpacings -> {
+                    "Columns" -> {{0.2}}, "Rows" -> {{Automatic}}}], "Grid"], 
+                    TooltipStyle -> {
+                    Background -> RGBColor[
+                    0.9098039215686274, 0.9529411764705882, 1.]}], 
+                    Annotation[#, 
+                    Grid[{{
+                    Graphics[{
+                    FaceForm[
+                    RGBColor[
+                    0.9607843137254902, 0.9607843137254902, 
+                    0.9607843137254902]], 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], 
+                    Thickness[
+                    Rational[2, 45]], 
+                    
+                    FilledCurve[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}}, {{{10.5, 18.75}, {10.5, 
+                    18.}, {9., 18.}, {9., 15.75}, {13.5, 15.75}, {13.5, 
+                    18.}, {12., 18.}, {12., 18.75}}, {{6., 18.}, {6., 4.5}, {
+                    16.5, 4.5}, {16.5, 18.}, {14.25, 18.}, {14.25, 17.25}, {
+                    15.75, 17.25}, {15.75, 5.25}, {6.75, 5.25}, {6.75, 
+                    17.25}, {8.25, 17.25}, {8.25, 18.}}, {{9.75, 17.25}, {
+                    12.75, 17.25}, {12.75, 16.5}, {9.75, 16.5}}}], 
+                    
+                    FilledCurve[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                    0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}}, {{{8.25, 
+                    14.25}, {14.25, 14.25}, {14.25, 13.5}, {8.25, 13.5}}, {{
+                    8.25, 12.}, {14.25, 12.}, {14.25, 11.25}, {8.25, 
+                    11.25}}, {{8.25, 9.75}, {14.25, 9.75}, {14.25, 9.}, {8.25,
+                     9.}}, {{8.25, 7.5}, {14.25, 7.5}, {14.25, 6.75}, {8.25, 
+                    6.75}}}]}, ImageSize -> 11], 
+                    Style["path: ", 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843]], {"ClassCount"}}}, 
+                    Alignment -> {Left, Center}, 
+                    Spacings -> {0.2, Automatic}], "Tooltip"]& ], "\":\""}, 
+                    "RowDefault"], "SummaryItemAnnotation"], 
+                    StyleBox["1917495", "SummaryItem"]}, {
+                    ItemBox[
+                    StyleBox["Arrays", Bold], 
+                    Frame -> {{False, False}, {False, True}}, FrameStyle -> 
+                    GrayLevel[0.85]], 
+                    ItemBox[
+                    StyleBox[
+                    
+                    GraphicsBox[{}, ImageSize -> {1, 11}, 
+                    BaselinePosition -> (Scaled[0.] -> Baseline)], 
+                    "CacheGraphics" -> False], 
+                    Frame -> {{False, False}, {False, True}}, FrameStyle -> 
+                    GrayLevel[0.85]]}, {
+                    StyleBox[
+                    TemplateBox[{
+                    TagBox[
+                    TooltipBox[
+                    TagBox[
+                    
+                    PaneSelectorBox[{
+                    False -> FrameBox["\"Weights\"", FrameStyle -> 
+                    GrayLevel[0, 0], FrameMargins -> 0, ContentPadding -> 
+                    False, BaselinePosition -> 0, StripOnInput -> False], 
+                    True -> FrameBox["\"Weights\"", Background -> 
+                    RGBColor[0.9098039215686274, 0.9529411764705882, 1.], 
+                    FrameStyle -> RGBColor[
+                    0.9098039215686274, 0.9529411764705882, 1.], 
+                    RoundingRadius -> 3, FrameMargins -> 0, ContentPadding -> 
+                    False, BaselinePosition -> 0, StripOnInput -> False]}, 
+                    Dynamic[
+                    CurrentValue["MouseOver"]], FrameMargins -> 0, 
+                    ContentPadding -> False, BaselinePosition -> 0, ImageSize -> 
+                    Automatic, FrameMargins -> 0], 
+                    EventHandlerTag[{"MouseClicked" :> CopyToClipboard[
+                    ToString[{"Weights"}, InputForm]], Method -> "Preemptive",
+                     PassEventsDown -> Automatic, PassEventsUp -> True}]], 
+                    TagBox[
+                    GridBox[{{
+                    GraphicsBox[{
+                    FaceForm[
+                    RGBColor[
+                    0.9607843137254902, 0.9607843137254902, 
+                    0.9607843137254902]], 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], 
+                    Thickness[
+                    NCache[
+                    Rational[2, 45], 0.044444444444444446`]], 
+                    
+                    FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}}, {{{10.5, 18.75}, {10.5, 
+                    18.}, {9., 18.}, {9., 15.75}, {13.5, 15.75}, {13.5, 
+                    18.}, {12., 18.}, {12., 18.75}}, {{6., 18.}, {6., 4.5}, {
+                    16.5, 4.5}, {16.5, 18.}, {14.25, 18.}, {14.25, 17.25}, {
+                    15.75, 17.25}, {15.75, 5.25}, {6.75, 5.25}, {6.75, 
+                    17.25}, {8.25, 17.25}, {8.25, 18.}}, {{9.75, 17.25}, {
+                    12.75, 17.25}, {12.75, 16.5}, {9.75, 16.5}}}], 
+                    
+                    FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2,
+                     0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                    0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}}, {{{8.25, 
+                    14.25}, {14.25, 14.25}, {14.25, 13.5}, {8.25, 13.5}}, {{
+                    8.25, 12.}, {14.25, 12.}, {14.25, 11.25}, {8.25, 
+                    11.25}}, {{8.25, 9.75}, {14.25, 9.75}, {14.25, 9.}, {8.25,
+                     9.}}, {{8.25, 7.5}, {14.25, 7.5}, {14.25, 6.75}, {8.25, 
+                    6.75}}}]}, ImageSize -> 11], 
+                    StyleBox["\"path: \"", 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], StripOnInput -> False], 
+                    RowBox[{"{", "\"Weights\"", "}"}]}}, 
+                    GridBoxAlignment -> {
+                    "Columns" -> {{Left}}, "Rows" -> {{Center}}}, AutoDelete -> 
+                    False, GridBoxItemSize -> {
+                    "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+                    GridBoxSpacings -> {
+                    "Columns" -> {{0.2}}, "Rows" -> {{Automatic}}}], "Grid"], 
+                    TooltipStyle -> {
+                    Background -> RGBColor[
+                    0.9098039215686274, 0.9529411764705882, 1.]}], 
+                    Annotation[#, 
+                    Grid[{{
+                    Graphics[{
+                    FaceForm[
+                    RGBColor[
+                    0.9607843137254902, 0.9607843137254902, 
+                    0.9607843137254902]], 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], 
+                    Thickness[
+                    Rational[2, 45]], 
+                    
+                    FilledCurve[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}}, {{{10.5, 18.75}, {10.5, 
+                    18.}, {9., 18.}, {9., 15.75}, {13.5, 15.75}, {13.5, 
+                    18.}, {12., 18.}, {12., 18.75}}, {{6., 18.}, {6., 4.5}, {
+                    16.5, 4.5}, {16.5, 18.}, {14.25, 18.}, {14.25, 17.25}, {
+                    15.75, 17.25}, {15.75, 5.25}, {6.75, 5.25}, {6.75, 
+                    17.25}, {8.25, 17.25}, {8.25, 18.}}, {{9.75, 17.25}, {
+                    12.75, 17.25}, {12.75, 16.5}, {9.75, 16.5}}}], 
+                    
+                    FilledCurve[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                    0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}}, {{{8.25, 
+                    14.25}, {14.25, 14.25}, {14.25, 13.5}, {8.25, 13.5}}, {{
+                    8.25, 12.}, {14.25, 12.}, {14.25, 11.25}, {8.25, 
+                    11.25}}, {{8.25, 9.75}, {14.25, 9.75}, {14.25, 9.}, {8.25,
+                     9.}}, {{8.25, 7.5}, {14.25, 7.5}, {14.25, 6.75}, {8.25, 
+                    6.75}}}]}, ImageSize -> 11], 
+                    Style["path: ", 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843]], {"Weights"}}}, 
+                    Alignment -> {Left, Center}, 
+                    Spacings -> {0.2, Automatic}], "Tooltip"]& ], "\":\""}, 
+                    "RowDefault"], "SummaryItemAnnotation"], 
+                    StyleBox[
+                    TemplateBox[{"\[ThinSpace]", "\" \"", "\"matrix\"", 
+                    StyleBox[
+                    "\"(\[VeryThinSpace]size: 1917495\[Times]300\
+\[VeryThinSpace])\"", 
+                    GrayLevel[0.5], StripOnInput -> False]}, 
+                    "RowWithSeparators"], "SummaryItem"]}, {
+                    ItemBox[
+                    StyleBox["Input Port", Bold], 
+                    Frame -> {{False, False}, {False, True}}, FrameStyle -> 
+                    GrayLevel[0.85]], 
+                    ItemBox[
+                    StyleBox[
+                    
+                    GraphicsBox[{}, ImageSize -> {1, 11}, 
+                    BaselinePosition -> (Scaled[0.] -> Baseline)], 
+                    "CacheGraphics" -> False], 
+                    Frame -> {{False, False}, {False, True}}, FrameStyle -> 
+                    GrayLevel[0.85]]}, {
+                    StyleBox[
+                    TemplateBox[{
+                    TagBox[
+                    TooltipBox[
+                    TagBox[
+                    
+                    PaneSelectorBox[{
+                    False -> FrameBox["\"Input\"", FrameStyle -> 
+                    GrayLevel[0, 0], FrameMargins -> 0, ContentPadding -> 
+                    False, BaselinePosition -> 0, StripOnInput -> False], 
+                    True -> FrameBox["\"Input\"", Background -> 
+                    RGBColor[0.9098039215686274, 0.9529411764705882, 1.], 
+                    FrameStyle -> RGBColor[
+                    0.9098039215686274, 0.9529411764705882, 1.], 
+                    RoundingRadius -> 3, FrameMargins -> 0, ContentPadding -> 
+                    False, BaselinePosition -> 0, StripOnInput -> False]}, 
+                    Dynamic[
+                    CurrentValue["MouseOver"]], FrameMargins -> 0, 
+                    ContentPadding -> False, BaselinePosition -> 0, ImageSize -> 
+                    Automatic, FrameMargins -> 0], 
+                    EventHandlerTag[{"MouseClicked" :> CopyToClipboard[
+                    ToString[{"Input"}, InputForm]], Method -> "Preemptive", 
+                    PassEventsDown -> Automatic, PassEventsUp -> True}]], 
+                    TagBox[
+                    GridBox[{{
+                    GraphicsBox[{
+                    FaceForm[
+                    RGBColor[
+                    0.9607843137254902, 0.9607843137254902, 
+                    0.9607843137254902]], 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], 
+                    Thickness[
+                    NCache[
+                    Rational[2, 45], 0.044444444444444446`]], 
+                    
+                    FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}}, {{{10.5, 18.75}, {10.5, 
+                    18.}, {9., 18.}, {9., 15.75}, {13.5, 15.75}, {13.5, 
+                    18.}, {12., 18.}, {12., 18.75}}, {{6., 18.}, {6., 4.5}, {
+                    16.5, 4.5}, {16.5, 18.}, {14.25, 18.}, {14.25, 17.25}, {
+                    15.75, 17.25}, {15.75, 5.25}, {6.75, 5.25}, {6.75, 
+                    17.25}, {8.25, 17.25}, {8.25, 18.}}, {{9.75, 17.25}, {
+                    12.75, 17.25}, {12.75, 16.5}, {9.75, 16.5}}}], 
+                    
+                    FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2,
+                     0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                    0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}}, {{{8.25, 
+                    14.25}, {14.25, 14.25}, {14.25, 13.5}, {8.25, 13.5}}, {{
+                    8.25, 12.}, {14.25, 12.}, {14.25, 11.25}, {8.25, 
+                    11.25}}, {{8.25, 9.75}, {14.25, 9.75}, {14.25, 9.}, {8.25,
+                     9.}}, {{8.25, 7.5}, {14.25, 7.5}, {14.25, 6.75}, {8.25, 
+                    6.75}}}]}, ImageSize -> 11], 
+                    StyleBox["\"path: \"", 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], StripOnInput -> False], 
+                    RowBox[{"{", "\"Input\"", "}"}]}}, 
+                    GridBoxAlignment -> {
+                    "Columns" -> {{Left}}, "Rows" -> {{Center}}}, AutoDelete -> 
+                    False, GridBoxItemSize -> {
+                    "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+                    GridBoxSpacings -> {
+                    "Columns" -> {{0.2}}, "Rows" -> {{Automatic}}}], "Grid"], 
+                    TooltipStyle -> {
+                    Background -> RGBColor[
+                    0.9098039215686274, 0.9529411764705882, 1.]}], 
+                    Annotation[#, 
+                    Grid[{{
+                    Graphics[{
+                    FaceForm[
+                    RGBColor[
+                    0.9607843137254902, 0.9607843137254902, 
+                    0.9607843137254902]], 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], 
+                    Thickness[
+                    Rational[2, 45]], 
+                    
+                    FilledCurve[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}}, {{{10.5, 18.75}, {10.5, 
+                    18.}, {9., 18.}, {9., 15.75}, {13.5, 15.75}, {13.5, 
+                    18.}, {12., 18.}, {12., 18.75}}, {{6., 18.}, {6., 4.5}, {
+                    16.5, 4.5}, {16.5, 18.}, {14.25, 18.}, {14.25, 17.25}, {
+                    15.75, 17.25}, {15.75, 5.25}, {6.75, 5.25}, {6.75, 
+                    17.25}, {8.25, 17.25}, {8.25, 18.}}, {{9.75, 17.25}, {
+                    12.75, 17.25}, {12.75, 16.5}, {9.75, 16.5}}}], 
+                    
+                    FilledCurve[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                    0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}}, {{{8.25, 
+                    14.25}, {14.25, 14.25}, {14.25, 13.5}, {8.25, 13.5}}, {{
+                    8.25, 12.}, {14.25, 12.}, {14.25, 11.25}, {8.25, 
+                    11.25}}, {{8.25, 9.75}, {14.25, 9.75}, {14.25, 9.}, {8.25,
+                     9.}}, {{8.25, 7.5}, {14.25, 7.5}, {14.25, 6.75}, {8.25, 
+                    6.75}}}]}, ImageSize -> 11], 
+                    Style["path: ", 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843]], {"Input"}}}, 
+                    Alignment -> {Left, Center}, 
+                    Spacings -> {0.2, Automatic}], "Tooltip"]& ], "\":\""}, 
+                    "RowDefault"], "SummaryItemAnnotation"], 
+                    StyleBox["\"string\"", "SummaryItem"]}, {
+                    ItemBox[
+                    StyleBox["Output Port", Bold], 
+                    Frame -> {{False, False}, {False, True}}, FrameStyle -> 
+                    GrayLevel[0.85]], 
+                    ItemBox[
+                    StyleBox[
+                    
+                    GraphicsBox[{}, ImageSize -> {1, 11}, 
+                    BaselinePosition -> (Scaled[0.] -> Baseline)], 
+                    "CacheGraphics" -> False], 
+                    Frame -> {{False, False}, {False, True}}, FrameStyle -> 
+                    GrayLevel[0.85]]}, {
+                    StyleBox[
+                    TemplateBox[{
+                    TagBox[
+                    TooltipBox[
+                    TagBox[
+                    
+                    PaneSelectorBox[{
+                    False -> FrameBox["\"Output\"", FrameStyle -> 
+                    GrayLevel[0, 0], FrameMargins -> 0, ContentPadding -> 
+                    False, BaselinePosition -> 0, StripOnInput -> False], 
+                    True -> FrameBox["\"Output\"", Background -> 
+                    RGBColor[0.9098039215686274, 0.9529411764705882, 1.], 
+                    FrameStyle -> RGBColor[
+                    0.9098039215686274, 0.9529411764705882, 1.], 
+                    RoundingRadius -> 3, FrameMargins -> 0, ContentPadding -> 
+                    False, BaselinePosition -> 0, StripOnInput -> False]}, 
+                    Dynamic[
+                    CurrentValue["MouseOver"]], FrameMargins -> 0, 
+                    ContentPadding -> False, BaselinePosition -> 0, ImageSize -> 
+                    Automatic, FrameMargins -> 0], 
+                    EventHandlerTag[{"MouseClicked" :> CopyToClipboard[
+                    ToString[{"Output"}, InputForm]], Method -> "Preemptive", 
+                    PassEventsDown -> Automatic, PassEventsUp -> True}]], 
+                    TagBox[
+                    GridBox[{{
+                    GraphicsBox[{
+                    FaceForm[
+                    RGBColor[
+                    0.9607843137254902, 0.9607843137254902, 
+                    0.9607843137254902]], 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], 
+                    Thickness[
+                    NCache[
+                    Rational[2, 45], 0.044444444444444446`]], 
+                    
+                    FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}}, {{{10.5, 18.75}, {10.5, 
+                    18.}, {9., 18.}, {9., 15.75}, {13.5, 15.75}, {13.5, 
+                    18.}, {12., 18.}, {12., 18.75}}, {{6., 18.}, {6., 4.5}, {
+                    16.5, 4.5}, {16.5, 18.}, {14.25, 18.}, {14.25, 17.25}, {
+                    15.75, 17.25}, {15.75, 5.25}, {6.75, 5.25}, {6.75, 
+                    17.25}, {8.25, 17.25}, {8.25, 18.}}, {{9.75, 17.25}, {
+                    12.75, 17.25}, {12.75, 16.5}, {9.75, 16.5}}}], 
+                    
+                    FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2,
+                     0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                    0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}}, {{{8.25, 
+                    14.25}, {14.25, 14.25}, {14.25, 13.5}, {8.25, 13.5}}, {{
+                    8.25, 12.}, {14.25, 12.}, {14.25, 11.25}, {8.25, 
+                    11.25}}, {{8.25, 9.75}, {14.25, 9.75}, {14.25, 9.}, {8.25,
+                     9.}}, {{8.25, 7.5}, {14.25, 7.5}, {14.25, 6.75}, {8.25, 
+                    6.75}}}]}, ImageSize -> 11], 
+                    StyleBox["\"path: \"", 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], StripOnInput -> False], 
+                    RowBox[{"{", "\"Output\"", "}"}]}}, 
+                    GridBoxAlignment -> {
+                    "Columns" -> {{Left}}, "Rows" -> {{Center}}}, AutoDelete -> 
+                    False, GridBoxItemSize -> {
+                    "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+                    GridBoxSpacings -> {
+                    "Columns" -> {{0.2}}, "Rows" -> {{Automatic}}}], "Grid"], 
+                    TooltipStyle -> {
+                    Background -> RGBColor[
+                    0.9098039215686274, 0.9529411764705882, 1.]}], 
+                    Annotation[#, 
+                    Grid[{{
+                    Graphics[{
+                    FaceForm[
+                    RGBColor[
+                    0.9607843137254902, 0.9607843137254902, 
+                    0.9607843137254902]], 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843], 
+                    Thickness[
+                    Rational[2, 45]], 
+                    
+                    FilledCurve[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
+                    0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}}, {{{10.5, 18.75}, {10.5, 
+                    18.}, {9., 18.}, {9., 15.75}, {13.5, 15.75}, {13.5, 
+                    18.}, {12., 18.}, {12., 18.75}}, {{6., 18.}, {6., 4.5}, {
+                    16.5, 4.5}, {16.5, 18.}, {14.25, 18.}, {14.25, 17.25}, {
+                    15.75, 17.25}, {15.75, 5.25}, {6.75, 5.25}, {6.75, 
+                    17.25}, {8.25, 17.25}, {8.25, 18.}}, {{9.75, 17.25}, {
+                    12.75, 17.25}, {12.75, 16.5}, {9.75, 16.5}}}], 
+                    
+                    FilledCurve[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 
+                    0}, {0, 1, 0}, {0, 1, 0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                    0}}, {{0, 2, 0}, {0, 1, 0}, {0, 1, 0}}}, {{{8.25, 
+                    14.25}, {14.25, 14.25}, {14.25, 13.5}, {8.25, 13.5}}, {{
+                    8.25, 12.}, {14.25, 12.}, {14.25, 11.25}, {8.25, 
+                    11.25}}, {{8.25, 9.75}, {14.25, 9.75}, {14.25, 9.}, {8.25,
+                     9.}}, {{8.25, 7.5}, {14.25, 7.5}, {14.25, 6.75}, {8.25, 
+                    6.75}}}]}, ImageSize -> 11], 
+                    Style["path: ", 
+                    RGBColor[
+                    0.5372549019607843, 0.5372549019607843, 
+                    0.5372549019607843]], {"Output"}}}, 
+                    Alignment -> {Left, Center}, 
+                    Spacings -> {0.2, Automatic}], "Tooltip"]& ], "\":\""}, 
+                    "RowDefault"], "SummaryItemAnnotation"], 
+                    StyleBox[
+                    TagBox[
+                    TemplateBox[{"\[ThinSpace]", "\" \"", "\"matrix\"", 
+                    StyleBox[
+                    TemplateBox[{"\"(\[VeryThinSpace]size: \"", 
+                    StyleBox["\"n\"", Italic, StripOnInput -> False], 
+                    "\"\[Times]300\[VeryThinSpace])\""}, "RowDefault"], 
+                    GrayLevel[0.5], StripOnInput -> False]}, 
+                    "RowWithSeparators"], Short], "SummaryItem"]}}, 
+                    GridBoxAlignment -> {"Columns" -> {{Left}}}], 
+                    EventHandlerTag[{"MouseClicked" :> If[
+                    ListQ[
+                    NeuralNetworks`Private`FormattingLayers`part = 
+                    MouseAnnotation[]], 
+                    If[NeuralNetworks`Private`FormattingLayers`opart === 
+                    NeuralNetworks`Private`FormattingLayers`part, 
+                    NeuralNetworks`Private`FormattingLayers`selection = Null; 
+                    NeuralNetworks`Private`FormattingLayers`opart = Null, 
+                    NeuralNetworks`Private`FormattingLayers`selection = 
+                    NeuralNetworks`Private`FormattingLayers`part; 
+                    NeuralNetworks`Private`FormattingLayers`opart = 
+                    NeuralNetworks`Private`FormattingLayers`part; Null]; 
+                    Null], Method -> "Preemptive", PassEventsDown -> 
+                    Automatic, PassEventsUp -> True}]]}, 
+                    NeuralNetworks`FormatSelectedParameterLayer[
+                    
+                    Lookup[<|{"Inputs", "Input"} -> <|
+                    "Form" -> NeuralNetworks`TensorT[{
+                    NeuralNetworks`LengthVar[0]}, 
+                    NeuralNetworks`IndexIntegerT[1, 1917495]], "Type" -> 
+                    "Tokens", "Tokens" -> NeuralNetworks`ValidatedParameter[
+                    Skeleton[
+                    Row[{1917494, " strings"}]]], "SplitPattern" -> 
+                    NeuralNetworks`ValidatedParameter[WordBoundary], 
+                    "IgnoreCase" -> True, "Count" -> 1917495, "$Version" -> 
+                    "13.3.0"|>|>, 
+                    Key[NeuralNetworks`Private`FormattingLayers`selection], 
+                    Null], NeuralNetworks`Private`FormattingLayers`part, \
+<||>, {}]}, GridBoxSpacings -> {"Columns" -> {{1}}}, 
+                    GridBoxAlignment -> {"Columns" -> {{Left}}}, 
+                    GridFrameMargins -> {{0, 0}, {0, 0}}], 
+                    TrackedSymbols :> {
+                    NeuralNetworks`Private`FormattingLayers`selection}], 
+                    Initialization :> {NetChain}], "SummaryItem"]}}, 
+                  GridBoxAlignment -> {
+                   "Columns" -> {{Left}}, "Rows" -> {{Automatic}}}, 
+                  AutoDelete -> False, 
+                  GridBoxItemSize -> {
+                   "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+                  GridBoxSpacings -> {
+                   "Columns" -> {{2}}, "Rows" -> {{Automatic}}}, 
+                  BaseStyle -> {
+                   ShowStringCharacters -> False, NumberMarks -> False, 
+                    PrintPrecision -> 3, ShowSyntaxStyles -> False}]}}, 
+               GridBoxAlignment -> {"Columns" -> {{Left}}, "Rows" -> {{Top}}},
+                AutoDelete -> False, 
+               GridBoxItemSize -> {
+                "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+               BaselinePosition -> {1, 1}]}, 
+            Dynamic[Typeset`open$$], ImageSize -> Automatic]}, 
+          "SummaryPanel"], 
+         ButtonBox[
+          DynamicBox[
+           ToBoxes[
+            If[
+             
+             Or[$VersionNumber < 11.2, CurrentValue["RunningEvaluator"] =!= 
+              "Local"], 
+             Style["This object cannot be used as input.", "SummaryEmbed"], 
+             BoxForm`EmbedSummaryLabel[EmbeddingLayer, 2312115368, 
+              Dynamic[Typeset`embedState$$], Automatic]], StandardForm]], 
+          ButtonFunction :> 
+          BoxForm`EmbedSummaryInterpretation[
+           "Choose", EmbeddingLayer, 2312115368, 
+            9560844137887058481377938899260734755112817375112089480008, 
+            EvaluationBox[], 
+            Dynamic[Typeset`embedState$$], StandardForm, 
+            ElisionsDump`embedSummaryBoxes], DefaultBaseStyle -> 
+          "SummaryEmbedButton", ImageSize -> Inherited, 
+          BaseStyle -> {"DialogStyle"}, Enabled -> Dynamic[
+            
+            And[$VersionNumber >= 11.2, CurrentValue["RunningEvaluator"] === 
+             "Local", Typeset`embedState$$ === "Ready"]], Appearance -> 
+          Inherited, Method -> Inherited, Evaluator -> Automatic]}, 
+        "SummaryEmbedGrid"], DynamicModuleValues :> {}], 
+      StyleBox["]", "NonInterpretableSummary"]}]},
+   "CopyTag",
+   DisplayFunction->(#& ),
+   InterpretationFunction->("EmbeddingLayer[<>]"& )],
+  False,
+  BoxID -> 9560844137887058481377938899260734755112817375112089480008,
+  Editable->False,
+  SelectWithContents->True,
+  Selectable->False]], "Output",
+ CellChangeTimes->{3.900079016663565*^9},
+ CellLabel->
+  "Out[501]=",ExpressionUUID->"5d663996-fdc8-4640-becc-cdcb41c0cb88"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"sentence", "=", "\"\<This is a sample sentence.\>\""}], "\n", 
+   RowBox[{"tokens", "=", 
+    RowBox[{"TextWords", "[", "sentence", "]"}]}], "\[IndentingNewLine]", 
+   RowBox[{"wordVectors", "=", 
+    RowBox[{"gloveResource", "/@", "tokens"}]}]}]}]], "Input",
+ CellChangeTimes->{{3.9000786467748594`*^9, 3.9000786509514914`*^9}, 
+   3.900079597903908*^9},
+ CellLabel->
+  "In[503]:=",ExpressionUUID->"93316baa-51e3-4f1a-b3c6-239b2419b7d6"],
+
+Cell[BoxData["\<\"This is a sample sentence.\"\>"], "Output",
+ CellChangeTimes->{3.9000796081829047`*^9},
+ CellLabel->
+  "Out[503]=",ExpressionUUID->"24f0172f-c683-484c-a34c-71fe24a72113"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"\<\"This\"\>", ",", "\<\"is\"\>", ",", "\<\"a\"\>", 
+   ",", "\<\"sample\"\>", ",", "\<\"sentence\"\>"}], "}"}]], "Output",
+ CellChangeTimes->{3.900079608888629*^9},
+ CellLabel->
+  "Out[504]=",ExpressionUUID->"f0e95f16-182e-4821-9a8a-a6f9a7bce536"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{
+     "0.1922300010919571`", ",", "0.28554001450538635`", ",", 
+      "0.012628999538719654`", ",", 
+      RowBox[{"-", "0.22883999347686768`"}], ",", "0.9405199885368347`", ",", 
+      RowBox[{"-", "0.3627699911594391`"}], ",", 
+      RowBox[{"-", "4.309800148010254`"}], ",", "0.3285300135612488`", ",", 
+      RowBox[{"-", "0.5995000004768372`"}], ",", 
+      RowBox[{"-", "0.5773100256919861`"}], ",", "0.21548999845981598`", ",", 
+      RowBox[{"-", "0.043195001780986786`"}], ",", 
+      RowBox[{"-", "0.07955999672412872`"}], ",", "0.38541001081466675`", ",",
+       "0.09460700303316116`", ",", 
+      RowBox[{"-", "0.5848000049591064`"}], ",", 
+      RowBox[{"-", "0.28964000940322876`"}], ",", 
+      RowBox[{"-", "0.04604199901223183`"}], ",", "0.40985000133514404`", ",",
+       "0.34588000178337097`", ",", 
+      RowBox[{"-", "0.004809599835425615`"}], ",", 
+      RowBox[{"-", "0.0714389979839325`"}], ",", 
+      RowBox[{"-", "0.000022594000256503932`"}], ",", 
+      RowBox[{"-", "0.06791699677705765`"}], ",", 
+      RowBox[{"-", "0.18810999393463135`"}], ",", "0.054618000984191895`", 
+      ",", 
+      RowBox[{"-", "0.3722600042819977`"}], ",", "0.5870299935340881`", ",", 
+      RowBox[{"-", "0.24184000492095947`"}], ",", "0.4854399859905243`", ",", 
+      RowBox[{"-", "0.3755300045013428`"}], ",", "0.32624000310897827`", ",", 
+      "0.3893499970436096`", ",", "0.01372699998319149`", ",", 
+      RowBox[{"-", "0.39482998847961426`"}], ",", "0.04804399982094765`", ",",
+       "0.5454699993133545`", ",", 
+      RowBox[{"-", "0.0747700035572052`"}], ",", "0.63441002368927`", ",", 
+      RowBox[{"-", "0.11595000326633453`"}], ",", "0.21209000051021576`", ",", 
+      RowBox[{"-", "0.206169992685318`"}], ",", 
+      RowBox[{"-", "0.29041001200675964`"}], ",", 
+      RowBox[{"-", "0.23703999817371368`"}], ",", "0.004106400068849325`", 
+      ",", 
+      RowBox[{"-", "0.09928199648857117`"}], ",", "0.11892999708652496`", ",", 
+      RowBox[{"-", "0.005299199838191271`"}], ",", 
+      RowBox[{"-", "0.11422000080347061`"}], ",", 
+      RowBox[{"-", "0.09057799726724625`"}], ",", "0.26124000549316406`", ",",
+       "0.8337699770927429`", ",", 
+      RowBox[{"-", "0.11108999699354172`"}], ",", 
+      RowBox[{"-", "0.3285199999809265`"}], ",", "0.5016599893569946`", ",", 
+      RowBox[{"-", "0.2797299921512604`"}], ",", "0.2667999863624573`", ",", 
+      "0.3292199969291687`", ",", "0.23889000713825226`", ",", 
+      "0.3590799868106842`", ",", "0.1450600028038025`", ",", 
+      RowBox[{"-", "0.09116300195455551`"}], ",", 
+      RowBox[{"-", "0.23353999853134155`"}], ",", 
+      RowBox[{"-", "0.24834999442100525`"}], ",", 
+      RowBox[{"-", "0.24759000539779663`"}], ",", "0.15084999799728394`", ",", 
+      RowBox[{"-", "0.1714099943637848`"}], ",", 
+      RowBox[{"-", "0.027307000011205673`"}], ",", 
+      RowBox[{"-", "0.06802099943161011`"}], ",", 
+      RowBox[{"-", "0.48302000761032104`"}], ",", "0.002203000010922551`", 
+      ",", "0.2698799967765808`", ",", 
+      RowBox[{"-", "0.23518000543117523`"}], ",", 
+      RowBox[{"-", "0.5146499872207642`"}], ",", 
+      RowBox[{"-", "0.1593800038099289`"}], ",", "0.02343199960887432`", ",", 
+      RowBox[{"-", "0.008711899630725384`"}], ",", "0.580020010471344`", ",", 
+      RowBox[{"-", "0.13407999277114868`"}], ",", "0.19654999673366547`", ",", 
+      RowBox[{"-", "0.2271299958229065`"}], ",", 
+      RowBox[{"-", "0.9454200267791748`"}], ",", 
+      RowBox[{"-", "0.5716300010681152`"}], ",", 
+      RowBox[{"-", "0.3873699903488159`"}], ",", 
+      RowBox[{"-", "0.015954000875353813`"}], ",", 
+      RowBox[{"-", "0.3287999927997589`"}], ",", "0.400409996509552`", ",", 
+      RowBox[{"-", "0.29339998960494995`"}], ",", 
+      RowBox[{"-", "0.030269000679254532`"}], ",", "0.010723000392317772`", 
+      ",", "0.007622200064361095`", ",", "0.14406999945640564`", ",", 
+      "0.17482000589370728`", ",", "0.17780999839305878`", ",", 
+      "0.05785299837589264`", ",", "0.02668900042772293`", ",", 
+      RowBox[{"-", "2.6229000091552734`"}], ",", "0.009403199888765812`", ",", 
+      RowBox[{"-", "0.395220011472702`"}], ",", "0.40077000856399536`", ",", 
+      RowBox[{"-", "0.13102999329566956`"}], ",", 
+      RowBox[{"-", "0.21459999680519104`"}], ",", "0.08604300022125244`", ",", 
+      RowBox[{"-", "0.25722000002861023`"}], ",", 
+      RowBox[{"-", "0.06046399846673012`"}], ",", 
+      RowBox[{"-", "0.4697200059890747`"}], ",", "0.5944799780845642`", ",", 
+      RowBox[{"-", "0.03561199828982353`"}], ",", 
+      RowBox[{"-", "0.10569000244140625`"}], ",", 
+      RowBox[{"-", "0.21069000661373138`"}], ",", 
+      RowBox[{"-", "0.43147000670433044`"}], ",", 
+      RowBox[{"-", "0.05883999913930893`"}], ",", 
+      RowBox[{"-", "0.4476499855518341`"}], ",", 
+      RowBox[{"-", "0.24496999382972717`"}], ",", 
+      RowBox[{"-", "0.40400999784469604`"}], ",", "0.5119400024414062`", ",", 
+      "0.6493800282478333`", ",", "0.09998500347137451`", ",", 
+      RowBox[{"-", "0.17440000176429749`"}], ",", "0.030640000477433205`", 
+      ",", "0.03755899891257286`", ",", "0.23208999633789062`", ",", 
+      "0.39574000239372253`", ",", 
+      RowBox[{"-", "0.010696000419557095`"}], ",", "0.055670998990535736`", 
+      ",", 
+      RowBox[{"-", "0.25154998898506165`"}], ",", "0.7896999716758728`", ",", 
+      RowBox[{"-", "0.28995999693870544`"}], ",", "0.24900999665260315`", ",", 
+      RowBox[{"-", "0.05874599888920784`"}], ",", "0.2420700043439865`", ",", 
+      "0.13273000717163086`", ",", 
+      RowBox[{"-", "0.16213999688625336`"}], ",", 
+      RowBox[{"-", "0.14802999794483185`"}], ",", "0.6605100035667419`", ",", 
+      RowBox[{"-", "0.09124600142240524`"}], ",", 
+      RowBox[{"-", "0.28692999482154846`"}], ",", "0.0720210000872612`", ",", 
+      "0.31262001395225525`", ",", "0.271369993686676`", ",", 
+      "0.1757899969816208`", ",", "0.2292100042104721`", ",", 
+      "0.0799729973077774`", ",", 
+      RowBox[{"-", "0.10998000204563141`"}], ",", 
+      RowBox[{"-", "0.3478100001811981`"}], ",", 
+      RowBox[{"-", "0.1689399927854538`"}], ",", "0.19641999900341034`", ",", 
+      RowBox[{"-", "0.13928000628948212`"}], ",", "0.651639997959137`", ",", 
+      RowBox[{"-", "0.13523000478744507`"}], ",", 
+      RowBox[{"-", "0.2621299922466278`"}], ",", 
+      RowBox[{"-", "0.04355800151824951`"}], ",", 
+      RowBox[{"-", "0.044509999454021454`"}], ",", "0.06815099716186523`", 
+      ",", "0.05490599945187569`", ",", "0.19557000696659088`", ",", 
+      RowBox[{"-", "0.04085699841380119`"}], ",", 
+      RowBox[{"-", "0.1658799946308136`"}], ",", 
+      RowBox[{"-", "0.4864700138568878`"}], ",", 
+      RowBox[{"-", "0.1755799949169159`"}], ",", "0.8935999870300293`", ",", 
+      "0.2278199940919876`", ",", "0.011270999908447266`", ",", 
+      RowBox[{"-", "0.16245999932289124`"}], ",", "0.10317999869585037`", ",",
+       "0.33445000648498535`", ",", 
+      RowBox[{"-", "0.42085000872612`"}], ",", "0.18571999669075012`", ",", 
+      "0.36851000785827637`", ",", "0.06059100106358528`", ",", 
+      RowBox[{"-", "0.07443699985742569`"}], ",", 
+      RowBox[{"-", "0.49660998582839966`"}], ",", 
+      RowBox[{"-", "0.06021999940276146`"}], ",", 
+      RowBox[{"-", "0.5082299709320068`"}], ",", 
+      RowBox[{"-", "0.0014294999418780208`"}], ",", "0.18659000098705292`", 
+      ",", 
+      RowBox[{"-", "0.416020005941391`"}], ",", "0.018365999683737755`", ",", 
+      RowBox[{"-", "0.1940000057220459`"}], ",", 
+      RowBox[{"-", "0.39096999168395996`"}], ",", "0.5006800293922424`", ",", 
+      "0.6214900016784668`", ",", "0.13416999578475952`", ",", 
+      RowBox[{"-", "0.12071999907493591`"}], ",", 
+      RowBox[{"-", "0.16534000635147095`"}], ",", 
+      RowBox[{"-", "0.24194000661373138`"}], ",", "0.06693299859762192`", ",", 
+      RowBox[{"-", "0.2800999879837036`"}], ",", "0.2504499852657318`", ",", 
+      "0.016148999333381653`", ",", 
+      RowBox[{"-", "0.31262001395225525`"}], ",", "0.19346000254154205`", ",", 
+      RowBox[{"-", "0.23841999471187592`"}], ",", 
+      RowBox[{"-", "0.4789600074291229`"}], ",", "0.014038999564945698`", ",",
+       "0.0703509971499443`", ",", "0.3063499927520752`", ",", 
+      RowBox[{"-", "0.04957599937915802`"}], ",", "0.6617900133132935`", ",", 
+      RowBox[{"-", "0.06876199692487717`"}], ",", "0.1001100018620491`", ",", 
+      "0.04060899838805199`", ",", "0.060913000255823135`", ",", 
+      "0.1256600022315979`", ",", "0.07800400257110596`", ",", 
+      RowBox[{"-", "0.24195000529289246`"}], ",", "0.018286999315023422`", 
+      ",", "0.22682000696659088`", ",", "0.4936099946498871`", ",", 
+      RowBox[{"-", "0.1365399956703186`"}], ",", 
+      RowBox[{"-", "0.008209199644625187`"}], ",", "0.26978999376296997`", 
+      ",", 
+      RowBox[{"-", "0.08834700286388397`"}], ",", 
+      RowBox[{"-", "0.02731500007212162`"}], ",", 
+      RowBox[{"-", "0.32370999455451965`"}], ",", "0.15108999609947205`", ",", 
+      RowBox[{"-", "0.16103999316692352`"}], ",", "0.12131000310182571`", ",", 
+      RowBox[{"-", "0.2848300039768219`"}], ",", 
+      RowBox[{"-", "0.07216999679803848`"}], ",", 
+      RowBox[{"-", "0.007507000118494034`"}], ",", 
+      RowBox[{"-", "0.23996999859809875`"}], ",", "0.040460001677274704`", 
+      ",", 
+      RowBox[{"-", "0.1310800015926361`"}], ",", 
+      RowBox[{"-", "3.1533000469207764`"}], ",", 
+      RowBox[{"-", "0.09567999839782715`"}], ",", 
+      RowBox[{"-", "0.21381999552249908`"}], ",", 
+      RowBox[{"-", "0.4971599876880646`"}], ",", "0.2242400050163269`", ",", 
+      RowBox[{"-", "0.09893999993801117`"}], ",", "0.31707000732421875`", ",", 
+      RowBox[{"-", "0.3045099973678589`"}], ",", "0.25345999002456665`", ",", 
+      RowBox[{"-", "0.40178999304771423`"}], ",", 
+      RowBox[{"-", "0.3967300057411194`"}], ",", 
+      RowBox[{"-", "0.024258999153971672`"}], ",", 
+      RowBox[{"-", "0.31564998626708984`"}], ",", "0.3677099943161011`", ",", 
+      RowBox[{"-", "0.47916001081466675`"}], ",", 
+      RowBox[{"-", "0.37940001487731934`"}], ",", 
+      RowBox[{"-", "0.012120000086724758`"}], ",", "0.09891500324010849`", 
+      ",", 
+      RowBox[{"-", "0.8836600184440613`"}], ",", "0.26875999569892883`", ",", 
+      RowBox[{"-", "0.06483399868011475`"}], ",", 
+      RowBox[{"-", "0.553600013256073`"}], ",", "0.08620700240135193`", ",", 
+      "0.5391600131988525`", ",", "0.2150000035762787`", ",", 
+      "0.3604300022125244`", ",", 
+      RowBox[{"-", "0.07219599932432175`"}], ",", 
+      RowBox[{"-", "0.5243399739265442`"}], ",", "0.33809998631477356`", ",", 
+      "0.008547400124371052`", ",", "0.5733000040054321`", ",", 
+      "0.1901099979877472`", ",", 
+      RowBox[{"-", "0.1348000019788742`"}], ",", 
+      RowBox[{"-", "0.11588999629020691`"}], ",", 
+      RowBox[{"-", "0.451449990272522`"}], ",", 
+      RowBox[{"-", "0.40165001153945923`"}], ",", 
+      RowBox[{"-", "0.07009699940681458`"}], ",", 
+      RowBox[{"-", "0.3156900107860565`"}], ",", 
+      RowBox[{"-", "0.4227299988269806`"}], ",", "0.23431000113487244`", ",", 
+      "0.3652999997138977`", ",", 
+      RowBox[{"-", "0.28453001379966736`"}], ",", 
+      RowBox[{"-", "0.17764000594615936`"}], ",", "0.4577000141143799`", ",", 
+      RowBox[{"-", "0.08162499964237213`"}], ",", 
+      RowBox[{"-", "0.10191000252962112`"}], ",", 
+      RowBox[{"-", "0.05665000155568123`"}], ",", "0.41565001010894775`", ",", 
+      RowBox[{"-", "0.13204999268054962`"}], ",", 
+      RowBox[{"-", "0.12703000009059906`"}], ",", 
+      RowBox[{"-", "0.27066999673843384`"}], ",", 
+      RowBox[{"-", "0.0062007000669837`"}], ",", "0.40564000606536865`", ",", 
+      "0.11123999953269958`", ",", "0.22111999988555908`", ",", 
+      RowBox[{"-", "0.18343999981880188`"}], ",", "0.8809700012207031`", ",", 
+      RowBox[{"-", "0.025645000860095024`"}], ",", 
+      RowBox[{"-", "0.3595699965953827`"}], ",", "0.08865799754858017`", ",", 
+      "0.10021000355482101`", ",", 
+      RowBox[{"-", "0.24740999937057495`"}], ",", "0.013705000281333923`", 
+      ",", "0.12519000470638275`", ",", 
+      RowBox[{"-", "0.36403998732566833`"}], ",", 
+      RowBox[{"-", "0.30041998624801636`"}], ",", "0.10586000233888626`", ",",
+       "0.4818600118160248`", ",", "0.032620999962091446`", ",", 
+      RowBox[{"-", "0.18640999495983124`"}], ",", 
+      RowBox[{"-", "0.10459999740123749`"}], ",", 
+      RowBox[{"-", "0.306769996881485`"}], ",", 
+      RowBox[{"-", "0.30052998661994934`"}], ",", 
+      RowBox[{"-", "0.2557699978351593`"}], ",", 
+      RowBox[{"-", "0.20712999999523163`"}], ",", 
+      RowBox[{"-", "0.021694999188184738`"}]}], "}"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{"0.11395999789237976`", ",", "0.3450300097465515`", ",", 
+      RowBox[{"-", "0.05506400018930435`"}], ",", 
+      RowBox[{"-", "0.20192000269889832`"}], ",", "0.20848000049591064`", ",", 
+      RowBox[{"-", "0.09698999673128128`"}], ",", 
+      RowBox[{"-", "4.023600101470947`"}], ",", "0.9504600167274475`", ",", 
+      RowBox[{"-", "0.06080299988389015`"}], ",", 
+      RowBox[{"-", "0.8325999975204468`"}], ",", "0.39127999544143677`", ",", 
+      "0.0808819979429245`", ",", "0.1904900074005127`", ",", 
+      RowBox[{"-", "0.043595001101493835`"}], ",", 
+      RowBox[{"-", "0.3900099992752075`"}], ",", 
+      RowBox[{"-", "0.3495500087738037`"}], ",", "0.11262000352144241`", ",", 
+      RowBox[{"-", "0.1428699940443039`"}], ",", 
+      RowBox[{"-", "0.03276100009679794`"}], ",", "0.06790799647569656`", ",",
+       "0.17553000152111053`", ",", "0.31536999344825745`", ",", 
+      "0.2834799885749817`", ",", "0.10420999675989151`", ",", 
+      "0.35078001022338867`", ",", 
+      RowBox[{"-", "0.03233499825000763`"}], ",", 
+      RowBox[{"-", "0.36485999822616577`"}], ",", 
+      RowBox[{"-", "0.34773001074790955`"}], ",", 
+      RowBox[{"-", "0.20653000473976135`"}], ",", 
+      RowBox[{"-", "0.03959999978542328`"}], ",", 
+      RowBox[{"-", "0.230320006608963`"}], ",", 
+      RowBox[{"-", "0.07795099914073944`"}], ",", "0.23274999856948853`", ",", 
+      RowBox[{"-", "0.3065600097179413`"}], ",", 
+      RowBox[{"-", "0.4272800087928772`"}], ",", "0.11155000329017639`", ",", 
+      "0.5658400058746338`", ",", "0.1815599948167801`", ",", 
+      "0.24105000495910645`", ",", "0.2607699930667877`", ",", 
+      "0.10481999814510345`", ",", 
+      RowBox[{"-", "0.17408999800682068`"}], ",", 
+      RowBox[{"-", "0.27386000752449036`"}], ",", 
+      RowBox[{"-", "0.19085000455379486`"}], ",", "0.0013360000448301435`", 
+      ",", "0.15197999775409698`", ",", 
+      RowBox[{"-", "0.08544199913740158`"}], ",", 
+      RowBox[{"-", "0.45298999547958374`"}], ",", 
+      RowBox[{"-", "0.2595199942588806`"}], ",", 
+      RowBox[{"-", "0.10322999954223633`"}], ",", "0.16032999753952026`", ",",
+       "0.84934002161026`", ",", 
+      RowBox[{"-", "0.14610999822616577`"}], ",", 
+      RowBox[{"-", "0.09773299843072891`"}], ",", 
+      RowBox[{"-", "0.10756000131368637`"}], ",", 
+      RowBox[{"-", "0.6423100233078003`"}], ",", 
+      RowBox[{"-", "0.086497001349926`"}], ",", "0.198170006275177`", ",", 
+      RowBox[{"-", "0.14499999582767487`"}], ",", "0.08102300018072128`", ",", 
+      RowBox[{"-", "0.5169500112533569`"}], ",", 
+      RowBox[{"-", "0.05483099818229675`"}], ",", 
+      RowBox[{"-", "0.01184799987822771`"}], ",", "0.14594000577926636`", ",",
+       "0.27601999044418335`", ",", "0.26170000433921814`", ",", 
+      "0.47356998920440674`", ",", "0.08077400177717209`", ",", 
+      "0.024028999730944633`", ",", 
+      RowBox[{"-", "0.2088399976491928`"}], ",", 
+      RowBox[{"-", "0.19014999270439148`"}], ",", "0.1320600062608719`", ",", 
+      RowBox[{"-", "0.3156999945640564`"}], ",", 
+      RowBox[{"-", "0.38179001212120056`"}], ",", 
+      RowBox[{"-", "0.09975700080394745`"}], ",", 
+      RowBox[{"-", "0.4715900123119354`"}], ",", "0.38780999183654785`", ",", 
+      RowBox[{"-", "0.15528999269008636`"}], ",", "0.14584000408649445`", ",",
+       "0.061406999826431274`", ",", 
+      RowBox[{"-", "0.34411001205444336`"}], ",", 
+      RowBox[{"-", "1.2493000030517578`"}], ",", 
+      RowBox[{"-", "0.5599700212478638`"}], ",", 
+      RowBox[{"-", "0.518559992313385`"}], ",", "0.254040002822876`", ",", 
+      "0.2322400063276291`", ",", 
+      RowBox[{"-", "0.2608200013637543`"}], ",", 
+      RowBox[{"-", "0.20300999283790588`"}], ",", "0.09103599935770035`", ",", 
+      RowBox[{"-", "0.15094000101089478`"}], ",", "0.05454200133681297`", ",",
+       "0.12856000661849976`", ",", 
+      RowBox[{"-", "0.259770005941391`"}], ",", "0.5790600180625916`", ",", 
+      "0.4349600076675415`", ",", "0.1150600016117096`", ",", 
+      RowBox[{"-", "2.491300106048584`"}], ",", 
+      RowBox[{"-", "0.07403899729251862`"}], ",", 
+      RowBox[{"-", "0.22596000134944916`"}], ",", 
+      RowBox[{"-", "0.07805900275707245`"}], ",", "0.3700000047683716`", ",", 
+      "0.14267000555992126`", ",", "0.2984200119972229`", ",", 
+      "0.2515900135040283`", ",", "0.18929000198841095`", ",", 
+      RowBox[{"-", "0.21654999256134033`"}], ",", 
+      RowBox[{"-", "0.06476999819278717`"}], ",", 
+      RowBox[{"-", "0.3140600025653839`"}], ",", 
+      RowBox[{"-", "0.22593000531196594`"}], ",", 
+      RowBox[{"-", "0.03553299978375435`"}], ",", 
+      RowBox[{"-", "0.006800999864935875`"}], ",", 
+      RowBox[{"-", "0.19787999987602234`"}], ",", 
+      RowBox[{"-", "0.3361999988555908`"}], ",", "0.11342000216245651`", ",", 
+      RowBox[{"-", "0.2664499878883362`"}], ",", "0.20059999823570251`", ",", 
+      "0.5331199765205383`", ",", 
+      RowBox[{"-", "0.1707099974155426`"}], ",", "0.29387998580932617`", ",", 
+      RowBox[{"-", "0.15440000593662262`"}], ",", 
+      RowBox[{"-", "0.3238599896430969`"}], ",", 
+      RowBox[{"-", "0.2381500005722046`"}], ",", 
+      RowBox[{"-", "0.0743120014667511`"}], ",", 
+      RowBox[{"-", "0.002395499963313341`"}], ",", "0.31235000491142273`", 
+      ",", "0.023315999656915665`", ",", "0.35249000787734985`", ",", 
+      RowBox[{"-", "0.3712100088596344`"}], ",", 
+      RowBox[{"-", "0.02559100091457367`"}], ",", "0.11687999963760376`", ",", 
+      RowBox[{"-", "0.1956000030040741`"}], ",", 
+      RowBox[{"-", "0.03789899870753288`"}], ",", 
+      RowBox[{"-", "0.0590209998190403`"}], ",", "0.12693999707698822`", ",", 
+      "0.015057000331580639`", ",", 
+      RowBox[{"-", "0.05980699881911278`"}], ",", "0.11488000303506851`", ",",
+       "0.13459999859333038`", ",", "0.384880006313324`", ",", 
+      RowBox[{"-", "0.007054099813103676`"}], ",", "0.09581000357866287`", 
+      ",", "0.26326000690460205`", ",", "0.3179199993610382`", ",", 
+      RowBox[{"-", "0.020803000777959824`"}], ",", 
+      RowBox[{"-", "0.5706499814987183`"}], ",", "0.20960000157356262`", ",", 
+      "0.3424299955368042`", ",", 
+      RowBox[{"-", "0.13415999710559845`"}], ",", "0.15929000079631805`", ",",
+       "0.04995400086045265`", ",", 
+      RowBox[{"-", "0.31797000765800476`"}], ",", "0.0922819972038269`", ",", 
+      RowBox[{"-", "0.3618699908256531`"}], ",", 
+      RowBox[{"-", "0.1515599936246872`"}], ",", "0.20104999840259552`", ",", 
+      RowBox[{"-", "0.49371999502182007`"}], ",", 
+      RowBox[{"-", "0.24939000606536865`"}], ",", "0.5254799723625183`", ",", 
+      RowBox[{"-", "0.06741199642419815`"}], ",", "0.002972099930047989`", 
+      ",", "0.48416000604629517`", ",", 
+      RowBox[{"-", "0.2955299913883209`"}], ",", 
+      RowBox[{"-", "0.1868000030517578`"}], ",", "0.057142000645399094`", ",", 
+      RowBox[{"-", "0.03873300179839134`"}], ",", "0.11756999790668488`", ",", 
+      RowBox[{"-", "0.13335999846458435`"}], ",", "0.24709999561309814`", ",",
+       "0.7276700139045715`", ",", 
+      RowBox[{"-", "0.31940001249313354`"}], ",", "0.4351400136947632`", ",", 
+      RowBox[{"-", "0.1587499976158142`"}], ",", "0.20183999836444855`", ",", 
+      "0.09315799921751022`", ",", 
+      RowBox[{"-", "0.19095000624656677`"}], ",", "0.7383700013160706`", ",", 
+      "0.31189998984336853`", ",", 
+      RowBox[{"-", "0.18696999549865723`"}], ",", "0.11705999821424484`", ",", 
+      RowBox[{"-", "0.19537000358104706`"}], ",", "0.04848000034689903`", ",", 
+      RowBox[{"-", "0.13815000653266907`"}], ",", "0.083467997610569`", ",", 
+      "0.10712999850511551`", ",", "0.22464999556541443`", ",", 
+      RowBox[{"-", "0.6552600264549255`"}], ",", "0.518779993057251`", ",", 
+      "0.24839000403881073`", ",", "0.13338999450206757`", ",", 
+      RowBox[{"-", "0.007666800171136856`"}], ",", 
+      RowBox[{"-", "0.21110999584197998`"}], ",", "0.3349800109863281`", ",", 
+      "0.42291998863220215`", ",", 
+      RowBox[{"-", "0.1945600062608719`"}], ",", "0.5649999976158142`", ",", 
+      "0.4542100131511688`", ",", "0.160630002617836`", ",", 
+      RowBox[{"-", "0.25718000531196594`"}], ",", "0.43720999360084534`", ",", 
+      RowBox[{"-", "0.42302998900413513`"}], ",", "0.09747599810361862`", ",", 
+      RowBox[{"-", "0.015056000091135502`"}], ",", "0.06403599679470062`", 
+      ",", 
+      RowBox[{"-", "0.0873590037226677`"}], ",", 
+      RowBox[{"-", "0.00715859979391098`"}], ",", "0.38120999932289124`", ",",
+       "0.33028000593185425`", ",", "0.2967599928379059`", ",", 
+      "0.23904000222682953`", ",", 
+      RowBox[{"-", "0.14327000081539154`"}], ",", 
+      RowBox[{"-", "0.10109999775886536`"}], ",", 
+      RowBox[{"-", "0.16298000514507294`"}], ",", "0.15252000093460083`", ",",
+       "0.06624600291252136`", ",", "0.08700799942016602`", ",", 
+      "0.36414000391960144`", ",", "0.23292000591754913`", ",", 
+      RowBox[{"-", "0.5452700257301331`"}], ",", 
+      RowBox[{"-", "0.17597000300884247`"}], ",", 
+      RowBox[{"-", "0.5762900114059448`"}], ",", 
+      RowBox[{"-", "0.2782500088214874`"}], ",", 
+      RowBox[{"-", "0.2104800045490265`"}], ",", "0.31815001368522644`", ",", 
+      RowBox[{"-", "0.11145000159740448`"}], ",", 
+      RowBox[{"-", "3.370699882507324`"}], ",", 
+      RowBox[{"-", "0.5757799744606018`"}], ",", 
+      RowBox[{"-", "0.31547999382019043`"}], ",", 
+      RowBox[{"-", "0.21492999792099`"}], ",", "0.06938000023365021`", ",", 
+      RowBox[{"-", "0.297789990901947`"}], ",", 
+      RowBox[{"-", "0.12619000673294067`"}], ",", "0.4014900028705597`", ",", 
+      RowBox[{"-", "0.1363999992609024`"}], ",", 
+      RowBox[{"-", "0.6016600131988525`"}], ",", "0.013698999769985676`", ",", 
+      RowBox[{"-", "0.14000999927520752`"}], ",", "0.5095700025558472`", ",", 
+      "0.03451799973845482`", ",", 
+      RowBox[{"-", "0.08204399794340134`"}], ",", 
+      RowBox[{"-", "0.1522500067949295`"}], ",", "0.0548349991440773`", ",", 
+      RowBox[{"-", "0.3027699887752533`"}], ",", 
+      RowBox[{"-", "0.22070999443531036`"}], ",", "0.2262199968099594`", ",", 
+      "0.26695001125335693`", ",", 
+      RowBox[{"-", "0.03246400132775307`"}], ",", "0.05550599843263626`", ",", 
+      RowBox[{"-", "0.07188300043344498`"}], ",", 
+      RowBox[{"-", "0.12037000060081482`"}], ",", "0.21999000012874603`", ",", 
+      RowBox[{"-", "0.11196000128984451`"}], ",", 
+      RowBox[{"-", "0.009520299732685089`"}], ",", 
+      RowBox[{"-", "0.054641999304294586`"}], ",", "0.12504999339580536`", 
+      ",", "0.3835799992084503`", ",", "0.02755500003695488`", ",", 
+      "0.05224499851465225`", ",", 
+      RowBox[{"-", "0.01439599972218275`"}], ",", "0.13378000259399414`", ",",
+       "0.13169999420642853`", ",", "0.14485999941825867`", ",", 
+      RowBox[{"-", "0.20949000120162964`"}], ",", 
+      RowBox[{"-", "0.2814599871635437`"}], ",", "0.06376300007104874`", ",", 
+      "0.0987749993801117`", ",", "0.1251399964094162`", ",", 
+      RowBox[{"-", "0.7617800235748291`"}], ",", 
+      RowBox[{"-", "0.12257999926805496`"}], ",", "0.21424999833106995`", ",",
+       "0.02154799923300743`", ",", "0.4007200002670288`", ",", 
+      RowBox[{"-", "0.18433000147342682`"}], ",", 
+      RowBox[{"-", "0.17930999398231506`"}], ",", "0.07943399995565414`", ",", 
+      RowBox[{"-", "0.6286399960517883`"}], ",", "0.16944999992847443`", ",", 
+      "0.1506900042295456`", ",", "0.2589699923992157`", ",", 
+      RowBox[{"-", "0.3178899884223938`"}], ",", 
+      RowBox[{"-", "0.2958199977874756`"}], ",", "0.8113399744033813`", ",", 
+      RowBox[{"-", "0.45500999689102173`"}], ",", 
+      RowBox[{"-", "0.2029000073671341`"}], ",", "0.06827899813652039`", ",", 
+      RowBox[{"-", "0.06824000179767609`"}], ",", "0.2911199927330017`", ",", 
+      "0.3288300037384033`", ",", "0.20015999674797058`", ",", 
+      RowBox[{"-", "0.23232999444007874`"}], ",", 
+      RowBox[{"-", "0.5930899977684021`"}], ",", 
+      RowBox[{"-", "0.08520200103521347`"}], ",", 
+      RowBox[{"-", "0.01858700066804886`"}], ",", 
+      RowBox[{"-", "0.25808998942375183`"}], ",", "0.2173900008201599`", ",", 
+      "0.21592000126838684`", ",", "0.08163300156593323`", ",", 
+      "0.12223999947309494`", ",", 
+      RowBox[{"-", "0.3724699914455414`"}], ",", "0.28790000081062317`", ",", 
+      RowBox[{"-", "0.18028999865055084`"}]}], "}"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"-", "0.03583500161767006`"}], ",", "0.778439998626709`", ",", 
+      RowBox[{"-", "0.518060028553009`"}], ",", "0.08068200200796127`", ",", 
+      RowBox[{"-", "0.13173000514507294`"}], ",", 
+      RowBox[{"-", "0.28606000542640686`"}], ",", 
+      RowBox[{"-", "4.248499870300293`"}], ",", "0.8182700276374817`", ",", 
+      "0.240339994430542`", ",", 
+      RowBox[{"-", "0.6905699968338013`"}], ",", "0.21556000411510468`", ",", 
+      RowBox[{"-", "0.1243399977684021`"}], ",", 
+      RowBox[{"-", "0.5422899723052979`"}], ",", 
+      RowBox[{"-", "0.1513800024986267`"}], ",", 
+      RowBox[{"-", "0.1359100043773651`"}], ",", 
+      RowBox[{"-", "0.5347999930381775`"}], ",", "0.34595000743865967`", ",", 
+      RowBox[{"-", "0.22925999760627747`"}], ",", 
+      RowBox[{"-", "0.013788999989628792`"}], ",", "0.04781600087881088`", 
+      ",", 
+      RowBox[{"-", "0.04142700135707855`"}], ",", 
+      RowBox[{"-", "0.41058000922203064`"}], ",", "0.10171999782323837`", ",", 
+      RowBox[{"-", "0.09709300100803375`"}], ",", 
+      RowBox[{"-", "0.0006464599864557385`"}], ",", 
+      RowBox[{"-", "0.02687700092792511`"}], ",", 
+      RowBox[{"-", "0.23473000526428223`"}], ",", 
+      RowBox[{"-", "0.060189999639987946`"}], ",", 
+      RowBox[{"-", "0.3140999972820282`"}], ",", 
+      RowBox[{"-", "0.5623999834060669`"}], ",", 
+      RowBox[{"-", "0.07939500361680984`"}], ",", 
+      RowBox[{"-", "0.22115999460220337`"}], ",", "0.09895200282335281`", ",",
+       "0.08990900218486786`", ",", 
+      RowBox[{"-", "0.06869900226593018`"}], ",", "0.3078700006008148`", ",", 
+      "0.3572399914264679`", ",", "0.27748000621795654`", ",", 
+      "0.21166999638080597`", ",", 
+      RowBox[{"-", "0.020938999950885773`"}], ",", 
+      RowBox[{"-", "0.4818800091743469`"}], ",", 
+      RowBox[{"-", "0.14981000125408173`"}], ",", 
+      RowBox[{"-", "0.19693000614643097`"}], ",", 
+      RowBox[{"-", "0.19514000415802002`"}], ",", 
+      RowBox[{"-", "0.02967200055718422`"}], ",", 
+      RowBox[{"-", "0.28619998693466187`"}], ",", "0.059519000351428986`", 
+      ",", 
+      RowBox[{"-", "0.15534000098705292`"}], ",", 
+      RowBox[{"-", "0.04198199883103371`"}], ",", "0.3130500018596649`", ",", 
+      RowBox[{"-", "0.10834000259637833`"}], ",", "0.744920015335083`", ",", 
+      RowBox[{"-", "0.26732999086380005`"}], ",", "0.0904180034995079`", ",", 
+      "0.3278299868106842`", ",", 
+      RowBox[{"-", "0.35071998834609985`"}], ",", "0.0019351999508216977`", 
+      ",", 
+      RowBox[{"-", "0.160180002450943`"}], ",", "0.354310005903244`", ",", 
+      RowBox[{"-", "0.06686600297689438`"}], ",", 
+      RowBox[{"-", "0.09490299969911575`"}], ",", 
+      RowBox[{"-", "0.026866000145673752`"}], ",", 
+      RowBox[{"-", "0.4434700012207031`"}], ",", "0.13843999803066254`", ",", 
+      "0.14951999485492706`", ",", "0.3448300063610077`", ",", 
+      "0.12545999884605408`", ",", "0.46309998631477356`", ",", 
+      RowBox[{"-", "0.00586890010163188`"}], ",", 
+      RowBox[{"-", "0.4144600033760071`"}], ",", "0.12612000107765198`", ",", 
+      "0.1360200047492981`", ",", 
+      RowBox[{"-", "0.4371500015258789`"}], ",", "0.09626799821853638`", ",", 
+      RowBox[{"-", "0.18978999555110931`"}], ",", 
+      RowBox[{"-", "0.7541800141334534`"}], ",", "0.35776999592781067`", ",", 
+      RowBox[{"-", "0.017479000613093376`"}], ",", 
+      RowBox[{"-", "0.21907000243663788`"}], ",", 
+      RowBox[{"-", "0.1838199943304062`"}], ",", 
+      RowBox[{"-", "0.2700200080871582`"}], ",", 
+      RowBox[{"-", "0.5458199977874756`"}], ",", 
+      RowBox[{"-", "0.4542100131511688`"}], ",", 
+      RowBox[{"-", "0.5499399900436401`"}], ",", 
+      RowBox[{"-", "0.4307900071144104`"}], ",", 
+      RowBox[{"-", "0.11862999945878983`"}], ",", 
+      RowBox[{"-", "0.473690003156662`"}], ",", 
+      RowBox[{"-", "0.09982500225305557`"}], ",", 
+      RowBox[{"-", "0.14260999858379364`"}], ",", 
+      RowBox[{"-", "0.08152499794960022`"}], ",", "0.3348599970340729`", ",", 
+      RowBox[{"-", "0.4146000146865845`"}], ",", 
+      RowBox[{"-", "0.07963600009679794`"}], ",", "0.3033899962902069`", ",", 
+      RowBox[{"-", "0.4257499873638153`"}], ",", 
+      RowBox[{"-", "0.3495599925518036`"}], ",", 
+      RowBox[{"-", "2.7356998920440674`"}], ",", 
+      RowBox[{"-", "0.7410399913787842`"}], ",", "0.21629999577999115`", ",", 
+      "0.42723000049591064`", ",", "0.03543100133538246`", ",", 
+      RowBox[{"-", "0.05463999882340431`"}], ",", "0.7066900134086609`", ",", 
+      RowBox[{"-", "0.29739001393318176`"}], ",", "0.008319100365042686`", 
+      ",", 
+      RowBox[{"-", "0.19280999898910522`"}], ",", "0.3239099979400635`", ",", 
+      "0.008754800073802471`", ",", 
+      RowBox[{"-", "0.16015000641345978`"}], ",", 
+      RowBox[{"-", "0.05908200144767761`"}], ",", "0.17502999305725098`", ",",
+       "0.35089001059532166`", ",", 
+      RowBox[{"-", "0.013539999723434448`"}], ",", 
+      RowBox[{"-", "0.3345699906349182`"}], ",", 
+      RowBox[{"-", "0.05177399888634682`"}], ",", "0.015690000727772713`", 
+      ",", "1.0290000438690186`", ",", "0.044273000210523605`", ",", 
+      "0.44905999302864075`", ",", 
+      RowBox[{"-", "0.2903600037097931`"}], ",", 
+      RowBox[{"-", "0.78684002161026`"}], ",", 
+      RowBox[{"-", "0.06000100076198578`"}], ",", "0.1178399994969368`", ",", 
+      RowBox[{"-", "0.11940000206232071`"}], ",", "0.20565000176429749`", ",", 
+      RowBox[{"-", "0.30654001235961914`"}], ",", 
+      RowBox[{"-", "0.10882999747991562`"}], ",", 
+      RowBox[{"-", "0.07685600221157074`"}], ",", 
+      RowBox[{"-", "0.027208000421524048`"}], ",", 
+      RowBox[{"-", "0.0032138999085873365`"}], ",", 
+      RowBox[{"-", "0.19201000034809113`"}], ",", "0.13827000558376312`", ",",
+       "0.1523900032043457`", ",", 
+      RowBox[{"-", "0.08557400107383728`"}], ",", "0.2577100098133087`", ",", 
+      "0.035583000630140305`", ",", "0.2570900022983551`", ",", 
+      RowBox[{"-", "0.13264000415802002`"}], ",", "0.6458500027656555`", ",", 
+      "0.5389999747276306`", ",", "0.09337999671697617`", ",", 
+      "0.17611999809741974`", ",", "0.45443999767303467`", ",", 
+      RowBox[{"-", "0.3025200068950653`"}], ",", 
+      RowBox[{"-", "0.5175099968910217`"}], ",", 
+      RowBox[{"-", "0.007707200013101101`"}], ",", "0.5207800269126892`", ",", 
+      RowBox[{"-", "0.22995999455451965`"}], ",", "0.5131300091743469`", ",", 
+      "0.6184999942779541`", ",", 
+      RowBox[{"-", "0.2709999978542328`"}], ",", "0.1871899962425232`", ",", 
+      "0.3465999960899353`", ",", 
+      RowBox[{"-", "0.2727600038051605`"}], ",", "0.3478600084781647`", ",", 
+      RowBox[{"-", "0.3171299993991852`"}], ",", "0.13038000464439392`", ",", 
+      "0.02123500034213066`", ",", 
+      RowBox[{"-", "0.2582100033760071`"}], ",", 
+      RowBox[{"-", "0.14553000032901764`"}], ",", "0.6594200134277344`", ",", 
+      RowBox[{"-", "0.19469000399112701`"}], ",", 
+      RowBox[{"-", "0.17671999335289001`"}], ",", 
+      RowBox[{"-", "0.17879000306129456`"}], ",", 
+      RowBox[{"-", "0.2911899983882904`"}], ",", "0.27390000224113464`", ",", 
+      RowBox[{"-", "0.0749489963054657`"}], ",", 
+      RowBox[{"-", "0.35214000940322876`"}], ",", "0.12526999413967133`", ",", 
+      RowBox[{"-", "0.15150000154972076`"}], ",", "0.16561000049114227`", ",", 
+      RowBox[{"-", "0.3553600013256073`"}], ",", "0.2616899907588959`", ",", 
+      RowBox[{"-", "0.6695200204849243`"}], ",", 
+      RowBox[{"-", "0.037627000361680984`"}], ",", "0.24556000530719757`", 
+      ",", 
+      RowBox[{"-", "0.4733799993991852`"}], ",", 
+      RowBox[{"-", "0.1960899978876114`"}], ",", 
+      RowBox[{"-", "0.16514000296592712`"}], ",", "0.18519000709056854`", ",",
+       "0.7436599731445312`", ",", "0.09954600036144257`", ",", 
+      RowBox[{"-", "0.3084299862384796`"}], ",", "0.0822409987449646`", ",", 
+      RowBox[{"-", "0.14698000252246857`"}], ",", 
+      RowBox[{"-", "0.5342100262641907`"}], ",", 
+      RowBox[{"-", "0.006124299950897694`"}], ",", "0.5776699781417847`", ",",
+       "0.3457599878311157`", ",", 
+      RowBox[{"-", "0.16245000064373016`"}], ",", "0.062226999551057816`", 
+      ",", 
+      RowBox[{"-", "0.27399998903274536`"}], ",", 
+      RowBox[{"-", "0.10936000198125839`"}], ",", "0.17973999679088593`", ",",
+       "0.3288100063800812`", ",", 
+      RowBox[{"-", "0.000902900006622076`"}], ",", "0.07228700071573257`", 
+      ",", "0.11748000234365463`", ",", "0.2514199912548065`", ",", 
+      "0.06233900040388107`", ",", "0.4490300118923187`", ",", 
+      RowBox[{"-", "0.0009428900084458292`"}], ",", "0.18163999915122986`", 
+      ",", 
+      RowBox[{"-", "0.29528000950813293`"}], ",", "0.17273999750614166`", ",",
+       "0.41538000106811523`", ",", 
+      RowBox[{"-", "0.19120000302791595`"}], ",", "0.14755000174045563`", ",",
+       "0.39594000577926636`", ",", 
+      RowBox[{"-", "0.16012999415397644`"}], ",", "0.0642319992184639`", ",", 
+      RowBox[{"-", "0.32971999049186707`"}], ",", "0.20029999315738678`", ",",
+       "0.3149299919605255`", ",", 
+      RowBox[{"-", "0.43744000792503357`"}], ",", 
+      RowBox[{"-", "0.1393900066614151`"}], ",", 
+      RowBox[{"-", "0.10014999657869339`"}], ",", 
+      RowBox[{"-", "0.20848000049591064`"}], ",", 
+      RowBox[{"-", "0.2260800004005432`"}], ",", 
+      RowBox[{"-", "0.04816899821162224`"}], ",", "0.2063799947500229`", ",", 
+      "0.5124899744987488`", ",", 
+      RowBox[{"-", "0.3409999907016754`"}], ",", 
+      RowBox[{"-", "0.004226000048220158`"}], ",", 
+      RowBox[{"-", "3.4637999534606934`"}], ",", 
+      RowBox[{"-", "0.12878000736236572`"}], ",", 
+      RowBox[{"-", "0.47150999307632446`"}], ",", 
+      RowBox[{"-", "0.42010998725891113`"}], ",", 
+      RowBox[{"-", "0.04058000072836876`"}], ",", "0.04234600067138672`", ",",
+       "0.11614999920129776`", ",", 
+      RowBox[{"-", "0.04193500056862831`"}], ",", "0.03820100054144859`", ",", 
+      RowBox[{"-", "0.2474599927663803`"}], ",", 
+      RowBox[{"-", "0.09352099895477295`"}], ",", "0.4452100098133087`", ",", 
+      RowBox[{"-", "0.04471400007605553`"}], ",", "0.324290007352829`", ",", 
+      RowBox[{"-", "0.1301400065422058`"}], ",", 
+      RowBox[{"-", "0.39149999618530273`"}], ",", 
+      RowBox[{"-", "0.460999995470047`"}], ",", 
+      RowBox[{"-", "0.07012200355529785`"}], ",", 
+      RowBox[{"-", "0.3522300124168396`"}], ",", "0.3868600130081177`", ",", 
+      RowBox[{"-", "0.2586899995803833`"}], ",", "0.4749700129032135`", ",", 
+      "0.07647199928760529`", ",", "0.008543300442397594`", ",", 
+      RowBox[{"-", "0.40470001101493835`"}], ",", "0.661549985408783`", ",", 
+      RowBox[{"-", "0.23044000566005707`"}], ",", 
+      RowBox[{"-", "0.021724000573158264`"}], ",", 
+      RowBox[{"-", "0.02188500016927719`"}], ",", 
+      RowBox[{"-", "0.0005420600064098835`"}], ",", "0.006534600164741278`", 
+      ",", 
+      RowBox[{"-", "0.07498200237751007`"}], ",", 
+      RowBox[{"-", "0.59197998046875`"}], ",", 
+      RowBox[{"-", "0.6120399832725525`"}], ",", 
+      RowBox[{"-", "0.14000000059604645`"}], ",", "0.1946299970149994`", ",", 
+      RowBox[{"-", "0.17722000181674957`"}], ",", 
+      RowBox[{"-", "0.5105699896812439`"}], ",", "0.4029900133609772`", ",", 
+      "0.26750001311302185`", ",", 
+      RowBox[{"-", "0.2933099865913391`"}], ",", 
+      RowBox[{"-", "0.18907000124454498`"}], ",", 
+      RowBox[{"-", "0.3762100040912628`"}], ",", 
+      RowBox[{"-", "0.4178999960422516`"}], ",", "0.5487499833106995`", ",", 
+      "0.07025499641895294`", ",", "0.8056399822235107`", ",", 
+      RowBox[{"-", "0.3840999901294708`"}], ",", 
+      RowBox[{"-", "0.4240100085735321`"}], ",", 
+      RowBox[{"-", "0.41383999586105347`"}], ",", "0.4387499988079071`", ",", 
+      RowBox[{"-", "0.2925199866294861`"}], ",", 
+      RowBox[{"-", "0.09118299931287766`"}], ",", "0.22039000689983368`", ",", 
+      RowBox[{"-", "0.18371999263763428`"}], ",", 
+      RowBox[{"-", "0.41012001037597656`"}], ",", "0.6284700036048889`", ",", 
+      "0.2198300063610077`", ",", 
+      RowBox[{"-", "0.07912400364875793`"}], ",", "0.019266000017523766`", 
+      ",", "0.855430006980896`", ",", 
+      RowBox[{"-", "0.13378000259399414`"}], ",", "0.6014099717140198`", ",", 
+      "0.6771799921989441`", ",", 
+      RowBox[{"-", "0.33309000730514526`"}], ",", 
+      RowBox[{"-", "0.25609999895095825`"}], ",", "0.08472699671983719`", ",",
+       "0.10458999872207642`", ",", 
+      RowBox[{"-", "0.2535899877548218`"}], ",", 
+      RowBox[{"-", "0.12002000212669373`"}], ",", 
+      RowBox[{"-", "0.38964998722076416`"}], ",", 
+      RowBox[{"-", "0.28780001401901245`"}], ",", "0.003670299891382456`", 
+      ",", "0.022321000695228577`", ",", 
+      RowBox[{"-", "0.3159100115299225`"}], ",", 
+      RowBox[{"-", "0.35607999563217163`"}]}], "}"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"-", "0.09376700222492218`"}], ",", "0.02071399986743927`", ",", 
+      RowBox[{"-", "0.33313000202178955`"}], ",", "0.31492000818252563`", ",",
+       "0.22279000282287598`", ",", "0.04679600149393082`", ",", 
+      RowBox[{"-", "2.661900043487549`"}], ",", "0.852940022945404`", ",", 
+      RowBox[{"-", "0.22450999915599823`"}], ",", "0.06918500363826752`", ",",
+       "0.05069600045681`", ",", 
+      RowBox[{"-", "0.15259000658988953`"}], ",", 
+      RowBox[{"-", "0.2922399938106537`"}], ",", "0.07380200177431107`", ",", 
+      RowBox[{"-", "0.11907000094652176`"}], ",", 
+      RowBox[{"-", "0.17768999934196472`"}], ",", "0.09105099737644196`", ",",
+       "0.15339000523090363`", ",", "0.1506199985742569`", ",", 
+      "0.23295000195503235`", ",", 
+      RowBox[{"-", "0.17677000164985657`"}], ",", "0.3705599904060364`", ",", 
+      "0.5163900256156921`", ",", 
+      RowBox[{"-", "0.1954900026321411`"}], ",", 
+      RowBox[{"-", "0.2930299937725067`"}], ",", 
+      RowBox[{"-", "0.21149000525474548`"}], ",", "0.00406600022688508`", ",", 
+      RowBox[{"-", "0.1789100021123886`"}], ",", "0.13773000240325928`", ",", 
+      RowBox[{"-", "0.5265200138092041`"}], ",", "0.6386600136756897`", ",", 
+      RowBox[{"-", "0.22724999487400055`"}], ",", 
+      RowBox[{"-", "0.20395000278949738`"}], ",", 
+      RowBox[{"-", "0.1312199980020523`"}], ",", 
+      RowBox[{"-", "0.1692200005054474`"}], ",", "0.47099998593330383`", ",", 
+      RowBox[{"-", "0.0466030016541481`"}], ",", 
+      RowBox[{"-", "0.15762999653816223`"}], ",", "0.11417999863624573`", ",",
+       "0.6531500220298767`", ",", 
+      RowBox[{"-", "0.485150009393692`"}], ",", 
+      RowBox[{"-", "0.1544799953699112`"}], ",", 
+      RowBox[{"-", "0.8294399976730347`"}], ",", "0.5052099823951721`", ",", 
+      "0.6036800146102905`", ",", "0.07453999668359756`", ",", 
+      RowBox[{"-", "0.12201999872922897`"}], ",", "0.18779000639915466`", ",", 
+      RowBox[{"-", "0.15160000324249268`"}], ",", 
+      RowBox[{"-", "0.09128499776124954`"}], ",", "0.005644099786877632`", 
+      ",", 
+      RowBox[{"-", "0.29234999418258667`"}], ",", "0.3397200107574463`", ",", 
+      "0.21852000057697296`", ",", 
+      RowBox[{"-", "0.2395000010728836`"}], ",", "0.6156499981880188`", ",", 
+      "0.4122900068759918`", ",", "0.4655500054359436`", ",", 
+      RowBox[{"-", "0.35534000396728516`"}], ",", "0.041248999536037445`", 
+      ",", "0.07647299766540527`", ",", 
+      RowBox[{"-", "0.3798699975013733`"}], ",", "0.46035999059677124`", ",", 
+      RowBox[{"-", "0.22221000492572784`"}], ",", "0.06090699881315231`", ",",
+       "0.52947998046875`", ",", "0.15904000401496887`", ",", 
+      RowBox[{"-", "0.8532500267028809`"}], ",", 
+      RowBox[{"-", "0.024423999711871147`"}], ",", 
+      RowBox[{"-", "0.33237001299858093`"}], ",", "0.48719000816345215`", ",", 
+      RowBox[{"-", "0.1268099993467331`"}], ",", "0.4102199971675873`", ",", 
+      "0.23205000162124634`", ",", "0.3764599859714508`", ",", 
+      RowBox[{"-", "0.3619900047779083`"}], ",", 
+      RowBox[{"-", "0.21074000000953674`"}], ",", "0.6351100206375122`", ",", 
+      "0.011575999669730663`", ",", "0.34463998675346375`", ",", 
+      "0.1781499981880188`", ",", "0.22624999284744263`", ",", 
+      "0.7335600256919861`", ",", 
+      RowBox[{"-", "0.38826999068260193`"}], ",", 
+      RowBox[{"-", "0.45859000086784363`"}], ",", "0.19383999705314636`", ",", 
+      RowBox[{"-", "0.4115000069141388`"}], ",", "0.36917001008987427`", ",", 
+      "0.6041499972343445`", ",", 
+      RowBox[{"-", "0.08381099998950958`"}], ",", "0.14678999781608582`", ",", 
+      RowBox[{"-", "0.28593000769615173`"}], ",", "0.162990003824234`", ",", 
+      "0.2963100075721741`", ",", 
+      RowBox[{"-", "0.38694998621940613`"}], ",", "0.2737700045108795`", ",", 
+      RowBox[{"-", "2.0906999111175537`"}], ",", 
+      RowBox[{"-", "0.11104000359773636`"}], ",", 
+      RowBox[{"-", "0.25918999314308167`"}], ",", "0.05616699904203415`", ",", 
+      RowBox[{"-", "0.06693899631500244`"}], ",", 
+      RowBox[{"-", "0.15253999829292297`"}], ",", 
+      RowBox[{"-", "0.07729300111532211`"}], ",", 
+      RowBox[{"-", "0.3069399893283844`"}], ",", "0.08743699640035629`", ",", 
+      "0.49277999997138977`", ",", 
+      RowBox[{"-", "0.21348999440670013`"}], ",", "0.19976000487804413`", ",",
+       "0.16614000499248505`", ",", "0.19984999299049377`", ",", 
+      RowBox[{"-", "0.18658000230789185`"}], ",", "0.3993299901485443`", ",", 
+      "0.007323000114411116`", ",", "0.08561599999666214`", ",", 
+      "0.5292400121688843`", ",", "0.38023999333381653`", ",", 
+      RowBox[{"-", "0.41442999243736267`"}], ",", "0.0015351000474765897`", 
+      ",", 
+      RowBox[{"-", "0.21001000702381134`"}], ",", "0.05725200101733208`", ",", 
+      RowBox[{"-", "0.19363999366760254`"}], ",", "0.23659999668598175`", ",",
+       "0.34731000661849976`", ",", "0.39079999923706055`", ",", 
+      RowBox[{"-", "0.07062199711799622`"}], ",", 
+      RowBox[{"-", "0.22184999287128448`"}], ",", 
+      RowBox[{"-", "0.23834000527858734`"}], ",", "0.3944000005722046`", ",", 
+      RowBox[{"-", "0.22021999955177307`"}], ",", "0.5880200266838074`", ",", 
+      "0.19277000427246094`", ",", "0.30188000202178955`", ",", 
+      RowBox[{"-", "0.334199994802475`"}], ",", 
+      RowBox[{"-", "0.14128999412059784`"}], ",", 
+      RowBox[{"-", "0.30305999517440796`"}], ",", 
+      RowBox[{"-", "0.012903999537229538`"}], ",", "0.018678000196814537`", 
+      ",", 
+      RowBox[{"-", "0.5250700116157532`"}], ",", "0.08920899778604507`", ",", 
+      "0.4220399856567383`", ",", "0.18431000411510468`", ",", 
+      "0.045455001294612885`", ",", 
+      RowBox[{"-", "0.5186300277709961`"}], ",", 
+      RowBox[{"-", "0.06137499958276749`"}], ",", 
+      RowBox[{"-", "0.618910014629364`"}], ",", 
+      RowBox[{"-", "0.4808200001716614`"}], ",", "0.02755500003695488`", ",", 
+      RowBox[{"-", "0.4059999883174896`"}], ",", "0.28881001472473145`", ",", 
+      RowBox[{"-", "0.17378999292850494`"}], ",", 
+      RowBox[{"-", "0.1274300068616867`"}], ",", 
+      RowBox[{"-", "0.22466999292373657`"}], ",", 
+      RowBox[{"-", "0.1355299949645996`"}], ",", "0.2943899929523468`", ",", 
+      "0.3084299862384796`", ",", 
+      RowBox[{"-", "0.3169200122356415`"}], ",", "0.416130006313324`", ",", 
+      RowBox[{"-", "0.16761000454425812`"}], ",", 
+      RowBox[{"-", "0.23613999783992767`"}], ",", 
+      RowBox[{"-", "0.15263999998569489`"}], ",", "0.2919999957084656`", ",", 
+      RowBox[{"-", "0.07933499664068222`"}], ",", 
+      RowBox[{"-", "0.4077000021934509`"}], ",", "0.1214900016784668`", ",", 
+      "0.27296000719070435`", ",", 
+      RowBox[{"-", "0.4761900007724762`"}], ",", "0.42333999276161194`", ",", 
+      "0.13053999841213226`", ",", 
+      RowBox[{"-", "0.000516240019351244`"}], ",", "0.38585999608039856`", 
+      ",", "0.7835100293159485`", ",", 
+      RowBox[{"-", "0.4109799861907959`"}], ",", "0.05570799857378006`", ",", 
+      "0.32611000537872314`", ",", 
+      RowBox[{"-", "0.19862000644207`"}], ",", 
+      RowBox[{"-", "0.052407000213861465`"}], ",", "0.24945999681949615`", 
+      ",", "0.15880000591278076`", ",", "0.10760000348091125`", ",", 
+      RowBox[{"-", "0.12039999663829803`"}], ",", "0.08010700345039368`", ",",
+       "0.28499001264572144`", ",", 
+      RowBox[{"-", "0.18599000573158264`"}], ",", 
+      RowBox[{"-", "0.3851900100708008`"}], ",", 
+      RowBox[{"-", "0.18456000089645386`"}], ",", "0.052887000143527985`", 
+      ",", 
+      RowBox[{"-", "0.04054100066423416`"}], ",", "0.13826000690460205`", ",",
+       "0.660539984703064`", ",", "0.6014400124549866`", ",", 
+      RowBox[{"-", "0.3995499908924103`"}], ",", "0.19271999597549438`", ",", 
+      "0.21341000497341156`", ",", "0.0660799965262413`", ",", 
+      "0.009137200191617012`", ",", 
+      RowBox[{"-", "0.34411001205444336`"}], ",", "0.15620000660419464`", ",",
+       "0.1970299929380417`", ",", "0.3314499855041504`", ",", 
+      "0.17611999809741974`", ",", 
+      RowBox[{"-", "0.1393200010061264`"}], ",", 
+      RowBox[{"-", "0.12126000225543976`"}], ",", 
+      RowBox[{"-", "0.188960000872612`"}], ",", 
+      RowBox[{"-", "0.06174200028181076`"}], ",", 
+      RowBox[{"-", "0.1238899976015091`"}], ",", "0.016574999317526817`", ",", 
+      RowBox[{"-", "0.4467099905014038`"}], ",", 
+      RowBox[{"-", "0.6612300276756287`"}], ",", "0.2623400092124939`", ",", 
+      RowBox[{"-", "0.02418999932706356`"}], ",", 
+      RowBox[{"-", "0.06327900290489197`"}], ",", 
+      RowBox[{"-", "0.3776499927043915`"}], ",", 
+      RowBox[{"-", "0.5909799933433533`"}], ",", "0.12646999955177307`", ",", 
+      RowBox[{"-", "0.016679000109434128`"}], ",", "0.31999000906944275`", 
+      ",", "0.22742000222206116`", ",", 
+      RowBox[{"-", "0.8655999898910522`"}], ",", 
+      RowBox[{"-", "0.6063200235366821`"}], ",", 
+      RowBox[{"-", "0.19508999586105347`"}], ",", "0.5553900003433228`", ",", 
+      "0.2337699979543686`", ",", 
+      RowBox[{"-", "0.5289300084114075`"}], ",", "0.05397000163793564`", ",", 
+      RowBox[{"-", "2.1993000507354736`"}], ",", 
+      RowBox[{"-", "0.18700000643730164`"}], ",", 
+      RowBox[{"-", "0.14334000647068024`"}], ",", 
+      RowBox[{"-", "0.2059600055217743`"}], ",", 
+      RowBox[{"-", "0.18008999526500702`"}], ",", "0.7019000053405762`", ",", 
+      "0.11819999665021896`", ",", 
+      RowBox[{"-", "0.012338000349700451`"}], ",", "0.18900999426841736`", 
+      ",", "0.26232001185417175`", ",", "0.10040000081062317`", ",", 
+      RowBox[{"-", "0.35319000482559204`"}], ",", 
+      RowBox[{"-", "1.0059000253677368`"}], ",", 
+      RowBox[{"-", "0.039473000913858414`"}], ",", 
+      RowBox[{"-", "0.23372000455856323`"}], ",", 
+      RowBox[{"-", "0.5761500000953674`"}], ",", "0.03393299877643585`", ",", 
+      RowBox[{"-", "0.5469499826431274`"}], ",", "0.5569000244140625`", ",", 
+      RowBox[{"-", "0.3819499909877777`"}], ",", "0.4991999864578247`", ",", 
+      RowBox[{"-", "0.25874000787734985`"}], ",", "0.41157999634742737`", ",",
+       "0.0949229970574379`", ",", 
+      RowBox[{"-", "0.48758000135421753`"}], ",", 
+      RowBox[{"-", "0.2127400040626526`"}], ",", "0.14575999975204468`", ",", 
+      "0.6108800172805786`", ",", 
+      RowBox[{"-", "0.16414999961853027`"}], ",", 
+      RowBox[{"-", "0.8184400200843811`"}], ",", "0.06826899945735931`", ",", 
+      RowBox[{"-", "0.6538100242614746`"}], ",", 
+      RowBox[{"-", "0.08449800312519073`"}], ",", 
+      RowBox[{"-", "0.9088500142097473`"}], ",", "0.2844800055027008`", ",", 
+      RowBox[{"-", "0.11660999804735184`"}], ",", 
+      RowBox[{"-", "0.15444999933242798`"}], ",", 
+      RowBox[{"-", "0.31185999512672424`"}], ",", "0.21482999622821808`", ",", 
+      RowBox[{"-", "0.037686001509428024`"}], ",", "0.1416199952363968`", ",", 
+      RowBox[{"-", "0.38488999009132385`"}], ",", 
+      RowBox[{"-", "0.36594998836517334`"}], ",", 
+      RowBox[{"-", "0.3197399973869324`"}], ",", 
+      RowBox[{"-", "0.20510999858379364`"}], ",", 
+      RowBox[{"-", "0.28582000732421875`"}], ",", "0.0674080029129982`", ",", 
+      RowBox[{"-", "0.18592000007629395`"}], ",", "0.1035899966955185`", ",", 
+      RowBox[{"-", "0.027434999123215675`"}], ",", 
+      RowBox[{"-", "0.10726000368595123`"}], ",", "0.1569799929857254`", ",", 
+      "0.537880003452301`", ",", "0.37042000889778137`", ",", 
+      "0.008064799942076206`", ",", "0.6597599983215332`", ",", 
+      "0.2774699926376343`", ",", "0.17985999584197998`", ",", 
+      "0.08378499746322632`", ",", 
+      RowBox[{"-", "0.491100013256073`"}], ",", 
+      RowBox[{"-", "0.14684000611305237`"}], ",", 
+      RowBox[{"-", "0.20840999484062195`"}], ",", 
+      RowBox[{"-", "0.22235000133514404`"}], ",", 
+      RowBox[{"-", "0.15832999348640442`"}], ",", "0.47369998693466187`", ",", 
+      RowBox[{"-", "0.0181489996612072`"}], ",", 
+      RowBox[{"-", "0.4314500093460083`"}], ",", 
+      RowBox[{"-", "0.14451999962329865`"}], ",", 
+      RowBox[{"-", "0.0698779970407486`"}], ",", "0.030546000227332115`", ",", 
+      RowBox[{"-", "0.05576600134372711`"}], ",", "0.13311000168323517`", ",", 
+      RowBox[{"-", "0.0025414000265300274`"}], ",", "0.08297500014305115`", 
+      ",", 
+      RowBox[{"-", "0.08825899660587311`"}], ",", "0.21698999404907227`"}], 
+     "}"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"-", "0.25310999155044556`"}], ",", "0.05503999814391136`", ",", 
+      RowBox[{"-", "0.07296299934387207`"}], ",", "0.2015399932861328`", ",", 
+      RowBox[{"-", "0.570389986038208`"}], ",", 
+      RowBox[{"-", "0.10739000141620636`"}], ",", 
+      RowBox[{"-", "2.7618000507354736`"}], ",", "0.7019400000572205`", ",", 
+      RowBox[{"-", "0.6300299763679504`"}], ",", 
+      RowBox[{"-", "0.059401001781225204`"}], ",", 
+      RowBox[{"-", "0.4406900107860565`"}], ",", 
+      RowBox[{"-", "0.3804900050163269`"}], ",", 
+      RowBox[{"-", "0.3293200135231018`"}], ",", 
+      RowBox[{"-", "0.3503200113773346`"}], ",", "0.5120199918746948`", ",", 
+      "0.7419300079345703`", ",", "0.2967599928379059`", ",", 
+      "0.08205199986696243`", ",", "0.0009043199825100601`", ",", 
+      "0.3099899888038635`", ",", "0.024747999384999275`", ",", 
+      "0.49503999948501587`", ",", "0.3599799871444702`", ",", 
+      "0.09524500370025635`", ",", "0.21852999925613403`", ",", 
+      "0.6098999977111816`", ",", 
+      RowBox[{"-", "0.22297999262809753`"}], ",", 
+      RowBox[{"-", "0.7308800220489502`"}], ",", "1.024399995803833`", ",", 
+      RowBox[{"-", "0.7045199871063232`"}], ",", 
+      RowBox[{"-", "0.6015499830245972`"}], ",", 
+      RowBox[{"-", "0.16604000329971313`"}], ",", 
+      RowBox[{"-", "0.31150001287460327`"}], ",", "0.647379994392395`", ",", 
+      RowBox[{"-", "0.6919299960136414`"}], ",", "0.12666000425815582`", ",", 
+      "0.5151399970054626`", ",", "0.22356000542640686`", ",", 
+      RowBox[{"-", "0.08055900037288666`"}], ",", "0.12779000401496887`", ",", 
+      RowBox[{"-", "0.48177000880241394`"}], ",", "0.5875399708747864`", ",", 
+      RowBox[{"-", "1.0302000045776367`"}], ",", "0.3276900053024292`", ",", 
+      RowBox[{"-", "0.1307699978351593`"}], ",", "0.11505000293254852`", ",", 
+      RowBox[{"-", "0.1684200018644333`"}], ",", "0.007601900026202202`", ",", 
+      RowBox[{"-", "0.07817000150680542`"}], ",", 
+      RowBox[{"-", "0.15547999739646912`"}], ",", "0.1534000039100647`", ",", 
+      RowBox[{"-", "0.1842000037431717`"}], ",", 
+      RowBox[{"-", "0.037004999816417694`"}], ",", "0.2445400059223175`", ",", 
+      RowBox[{"-", "0.03889000043272972`"}], ",", 
+      RowBox[{"-", "0.3935999870300293`"}], ",", 
+      RowBox[{"-", "0.008874599821865559`"}], ",", "0.7229300141334534`", ",", 
+      RowBox[{"-", "0.2896200120449066`"}], ",", 
+      RowBox[{"-", "0.5422999858856201`"}], ",", "0.287990003824234`", ",", 
+      RowBox[{"-", "0.3881399929523468`"}], ",", "0.3865100145339966`", ",", 
+      RowBox[{"-", "0.5331900119781494`"}], ",", 
+      RowBox[{"-", "0.3677000105381012`"}], ",", "0.149849995970726`", ",", 
+      RowBox[{"-", "0.28992998600006104`"}], ",", 
+      RowBox[{"-", "0.3835600018501282`"}], ",", 
+      RowBox[{"-", "0.19348999857902527`"}], ",", "0.2910099923610687`", ",", 
+      "0.3500100076198578`", ",", "0.1509999930858612`", ",", 
+      "0.09735000133514404`", ",", 
+      RowBox[{"-", "0.09682799875736237`"}], ",", "0.7372099757194519`", ",", 
+      "0.15841999650001526`", ",", 
+      RowBox[{"-", "0.3600099980831146`"}], ",", 
+      RowBox[{"-", "0.27414000034332275`"}], ",", 
+      RowBox[{"-", "0.13432000577449799`"}], ",", 
+      RowBox[{"-", "0.5299800038337708`"}], ",", 
+      RowBox[{"-", "0.7173900008201599`"}], ",", 
+      RowBox[{"-", "0.8032600283622742`"}], ",", "0.02534100040793419`", ",", 
+      RowBox[{"-", "0.5133399963378906`"}], ",", "0.38701000809669495`", ",", 
+      "0.03989199921488762`", ",", 
+      RowBox[{"-", "0.1055700033903122`"}], ",", "0.6041899919509888`", ",", 
+      RowBox[{"-", "0.09946099668741226`"}], ",", "0.17542999982833862`", ",", 
+      RowBox[{"-", "0.07978600263595581`"}], ",", "0.22205999493598938`", ",",
+       "0.5698000192642212`", ",", 
+      RowBox[{"-", "0.11461000144481659`"}], ",", "0.5821200013160706`", ",", 
+      "0.602180004119873`", ",", 
+      RowBox[{"-", "1.27839994430542`"}], ",", 
+      RowBox[{"-", "0.055789001286029816`"}], ",", "0.08782199770212173`", 
+      ",", "0.8133400082588196`", ",", "0.13766999542713165`", ",", 
+      RowBox[{"-", "0.05117800086736679`"}], ",", "0.14147000014781952`", ",",
+       "0.2757599949836731`", ",", 
+      RowBox[{"-", "0.06391700357198715`"}], ",", 
+      RowBox[{"-", "0.14674000442028046`"}], ",", "0.11945000290870667`", ",",
+       "0.0900140032172203`", ",", "0.32078999280929565`", ",", 
+      "0.3447200059890747`", ",", 
+      RowBox[{"-", "0.39361000061035156`"}], ",", 
+      RowBox[{"-", "0.2439499944448471`"}], ",", "0.5997899770736694`", ",", 
+      "0.27292001247406006`", ",", 
+      RowBox[{"-", "0.3559199869632721`"}], ",", "0.30970999598503113`", ",", 
+      "0.175819993019104`", ",", 
+      RowBox[{"-", "0.2592700123786926`"}], ",", 
+      RowBox[{"-", "0.06728000193834305`"}], ",", 
+      RowBox[{"-", "0.4583899974822998`"}], ",", 
+      RowBox[{"-", "0.4997299909591675`"}], ",", "0.005126399919390678`", ",",
+       "0.6825500130653381`", ",", 
+      RowBox[{"-", "0.12988999485969543`"}], ",", "0.7024700045585632`", ",", 
+      RowBox[{"-", "0.7767000198364258`"}], ",", "0.12876999378204346`", ",", 
+      RowBox[{"-", "0.16944000124931335`"}], ",", 
+      RowBox[{"-", "0.06636200100183487`"}], ",", "0.549780011177063`", ",", 
+      RowBox[{"-", "0.02884499914944172`"}], ",", "0.08786600083112717`", ",", 
+      RowBox[{"-", "0.18171000480651855`"}], ",", 
+      RowBox[{"-", "0.5045700073242188`"}], ",", 
+      RowBox[{"-", "0.03625199943780899`"}], ",", 
+      RowBox[{"-", "0.1946599930524826`"}], ",", "0.7649400234222412`", ",", 
+      RowBox[{"-", "0.27298998832702637`"}], ",", 
+      RowBox[{"-", "0.07070799916982651`"}], ",", "0.30730000138282776`", ",",
+       "0.3578900098800659`", ",", 
+      RowBox[{"-", "0.32879000902175903`"}], ",", "0.550320029258728`", ",", 
+      RowBox[{"-", "0.3553900122642517`"}], ",", "0.20760999619960785`", ",", 
+      RowBox[{"-", "0.22277000546455383`"}], ",", "0.19393999874591827`", ",", 
+      RowBox[{"-", "0.0188400000333786`"}], ",", "0.8266199827194214`", ",", 
+      RowBox[{"-", "0.18679000437259674`"}], ",", 
+      RowBox[{"-", "0.7807000279426575`"}], ",", "0.038871001452207565`", ",",
+       "0.40062999725341797`", ",", 
+      RowBox[{"-", "0.3862600028514862`"}], ",", 
+      RowBox[{"-", "0.5449399948120117`"}], ",", "0.14574000239372253`", ",", 
+      RowBox[{"-", "0.12599000334739685`"}], ",", "0.02810800075531006`", ",", 
+      RowBox[{"-", "0.47422999143600464`"}], ",", "0.03901299834251404`", ",",
+       "0.42469000816345215`", ",", "0.2869499921798706`", ",", 
+      RowBox[{"-", "0.30744001269340515`"}], ",", 
+      RowBox[{"-", "0.2625400125980377`"}], ",", "0.12154000252485275`", ",", 
+      RowBox[{"-", "0.4455600082874298`"}], ",", "0.3057900071144104`", ",", 
+      RowBox[{"-", "0.06622300297021866`"}], ",", 
+      RowBox[{"-", "0.34957998991012573`"}], ",", "0.3083299994468689`", ",", 
+      "0.388590008020401`", ",", 
+      RowBox[{"-", "0.4584299921989441`"}], ",", 
+      RowBox[{"-", "0.11057999730110168`"}], ",", 
+      RowBox[{"-", "0.19222000241279602`"}], ",", 
+      RowBox[{"-", "0.14045999944210052`"}], ",", "0.32460999488830566`", ",",
+       "0.7223299741744995`", ",", "0.20903000235557556`", ",", 
+      RowBox[{"-", "0.2538999915122986`"}], ",", 
+      RowBox[{"-", "0.010307000018656254`"}], ",", "0.3644599914550781`", ",", 
+      RowBox[{"-", "0.729889988899231`"}], ",", 
+      RowBox[{"-", "0.08291599899530411`"}], ",", 
+      RowBox[{"-", "0.16699999570846558`"}], ",", 
+      RowBox[{"-", "0.2116599977016449`"}], ",", "0.008646000176668167`", ",", 
+      RowBox[{"-", "0.20558999478816986`"}], ",", 
+      RowBox[{"-", "0.3174700140953064`"}], ",", 
+      RowBox[{"-", "0.2762700021266937`"}], ",", "0.32565999031066895`", ",", 
+      "0.11670000106096268`", ",", 
+      RowBox[{"-", "0.2214999943971634`"}], ",", "0.49792999029159546`", ",", 
+      RowBox[{"-", "0.22838999330997467`"}], ",", "0.24842999875545502`", ",",
+       "0.3274500072002411`", ",", "0.22981999814510345`", ",", 
+      RowBox[{"-", "0.0023934999480843544`"}], ",", "0.7066699862480164`", 
+      ",", 
+      RowBox[{"-", "0.13753999769687653`"}], ",", 
+      RowBox[{"-", "0.04106299951672554`"}], ",", "0.2571699917316437`", ",", 
+      RowBox[{"-", "0.4599300026893616`"}], ",", 
+      RowBox[{"-", "0.23353999853134155`"}], ",", 
+      RowBox[{"-", "0.7566800117492676`"}], ",", 
+      RowBox[{"-", "0.4540199935436249`"}], ",", 
+      RowBox[{"-", "0.02400900050997734`"}], ",", 
+      RowBox[{"-", "0.8669000267982483`"}], ",", "0.17542999982833862`", ",", 
+      RowBox[{"-", "0.5002599954605103`"}], ",", "0.38067999482154846`", ",", 
+      "0.02195099927484989`", ",", "0.8946499824523926`", ",", 
+      "0.12623000144958496`", ",", 
+      RowBox[{"-", "0.6578400135040283`"}], ",", "0.5145999789237976`", ",", 
+      RowBox[{"-", "0.340829998254776`"}], ",", "0.07241400331258774`", ",", 
+      RowBox[{"-", "0.8104599714279175`"}], ",", 
+      RowBox[{"-", "0.12386000156402588`"}], ",", 
+      RowBox[{"-", "0.7292400002479553`"}], ",", 
+      RowBox[{"-", "0.5677400231361389`"}], ",", 
+      RowBox[{"-", "0.12189999967813492`"}], ",", 
+      RowBox[{"-", "0.19710999727249146`"}], ",", 
+      RowBox[{"-", "1.2080999612808228`"}], ",", "0.30952998995780945`", ",", 
+      RowBox[{"-", "0.2113099992275238`"}], ",", 
+      RowBox[{"-", "0.48708999156951904`"}], ",", 
+      RowBox[{"-", "0.5501999855041504`"}], ",", 
+      RowBox[{"-", "0.6915000081062317`"}], ",", 
+      RowBox[{"-", "0.933139979839325`"}], ",", "0.34193000197410583`", ",", 
+      "0.028675999492406845`", ",", 
+      RowBox[{"-", "0.11122000217437744`"}], ",", 
+      RowBox[{"-", "0.04875800013542175`"}], ",", 
+      RowBox[{"-", "0.6559100151062012`"}], ",", 
+      RowBox[{"-", "0.2684299945831299`"}], ",", "0.32638999819755554`", ",", 
+      RowBox[{"-", "0.005500799976289272`"}], ",", 
+      RowBox[{"-", "0.5660799741744995`"}], ",", 
+      RowBox[{"-", "0.6866599917411804`"}], ",", 
+      RowBox[{"-", "0.4162299931049347`"}], ",", 
+      RowBox[{"-", "0.616890013217926`"}], ",", "0.08472099900245667`", ",", 
+      RowBox[{"-", "0.537630021572113`"}], ",", "0.5899400115013123`", ",", 
+      RowBox[{"-", "0.1947699934244156`"}], ",", "0.6046900153160095`", ",", 
+      RowBox[{"-", "0.2350900024175644`"}], ",", "0.7225599884986877`", ",", 
+      "0.03037099912762642`", ",", "0.23638999462127686`", ",", 
+      RowBox[{"-", "0.11732999980449677`"}], ",", 
+      RowBox[{"-", "0.3617100119590759`"}], ",", 
+      RowBox[{"-", "0.1332399994134903`"}], ",", "0.35863998532295227`", ",", 
+      RowBox[{"-", "0.6705999970436096`"}], ",", "0.31720998883247375`", ",", 
+      RowBox[{"-", "0.31189998984336853`"}], ",", 
+      RowBox[{"-", "0.2972699999809265`"}], ",", 
+      RowBox[{"-", "0.5661600232124329`"}], ",", 
+      RowBox[{"-", "0.3823600113391876`"}], ",", "0.0036190999671816826`", 
+      ",", "0.6592100262641907`", ",", 
+      RowBox[{"-", "0.26175999641418457`"}], ",", "0.28387999534606934`", ",",
+       "0.20735999941825867`", ",", "0.23615999519824982`", ",", 
+      RowBox[{"-", "0.04694399982690811`"}], ",", 
+      RowBox[{"-", "0.11105000227689743`"}], ",", "0.367900013923645`", ",", 
+      "0.1359499990940094`", ",", 
+      RowBox[{"-", "0.3259899914264679`"}], ",", "0.3895699977874756`", ",", 
+      "0.2310200035572052`", ",", "0.059457000344991684`", ",", 
+      RowBox[{"-", "0.1394599974155426`"}], ",", 
+      RowBox[{"-", "0.18299999833106995`"}], ",", "0.16394999623298645`", ",", 
+      RowBox[{"-", "0.23639999330043793`"}], ",", "0.3275800049304962`", ",", 
+      "0.2998799979686737`", ",", "0.3131600022315979`", ",", 
+      "0.3824799954891205`", ",", "0.15349000692367554`", ",", 
+      "0.3665199875831604`", ",", "0.14027999341487885`", ",", 
+      "0.6712200045585632`", ",", 
+      RowBox[{"-", "0.49112001061439514`"}], ",", "0.5200700163841248`", ",", 
+      "0.25165000557899475`", ",", 
+      RowBox[{"-", "0.5191299915313721`"}], ",", "0.06198599934577942`", ",", 
+      RowBox[{"-", "0.13899999856948853`"}], ",", 
+      RowBox[{"-", "0.12217999994754791`"}], ",", 
+      RowBox[{"-", "0.12398000061511993`"}], ",", "0.1317799985408783`", ",", 
+      "0.20061999559402466`", ",", 
+      RowBox[{"-", "0.40876999497413635`"}], ",", "0.2577100098133087`"}], 
+     "}"}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.9000796171331873`*^9},
+ CellLabel->
+  "Out[505]=",ExpressionUUID->"9f0d53ac-6423-4d45-8e31-1027c9408a28"]
+}, Open  ]]
+},
+WindowSize->{950.25, 522.75},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+FrontEndVersion->"13.3 for Microsoft Windows (64-bit) (June 3, 2023)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"feaf7ae2-cc2f-42dc-95b1-c203ad191843"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 3203, 89, 504, "Input",ExpressionUUID->"1bb2796d-19f7-43b2-ac04-ac80ca1d7e9f"],
+Cell[3764, 111, 130, 3, 28, "Input",ExpressionUUID->"ecd7db6c-e6d5-4949-b5f3-0a1c98514a2b"],
+Cell[CellGroupData[{
+Cell[3919, 118, 688, 20, 67, "Input",ExpressionUUID->"10c131b1-3d92-40e4-9199-78b713e3bf5e"],
+Cell[4610, 140, 56417, 1025, 89, "Output",ExpressionUUID->"5d663996-fdc8-4640-becc-cdcb41c0cb88"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[61064, 1170, 508, 11, 86, "Input",ExpressionUUID->"93316baa-51e3-4f1a-b3c6-239b2419b7d6"],
+Cell[61575, 1183, 188, 3, 32, "Output",ExpressionUUID->"24f0172f-c683-484c-a34c-71fe24a72113"],
+Cell[61766, 1188, 288, 6, 32, "Output",ExpressionUUID->"f0e95f16-182e-4821-9a8a-a6f9a7bce536"],
+Cell[62057, 1196, 62864, 1064, 2582, "Output",ExpressionUUID->"9f0d53ac-6423-4d45-8e31-1027c9408a28"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+

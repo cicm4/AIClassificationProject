@@ -1,0 +1,3 @@
+https://www.kaggle.com/datasets/anindya2906/glove6b?resource=download
+
+https://www.kaggle.com/datasets/wanderfj/enron-spam
